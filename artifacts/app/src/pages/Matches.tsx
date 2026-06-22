@@ -87,7 +87,7 @@ export default function Matches() {
                   <TableRow key={match.matchId} className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => setSelectedMatch(match)}>
                     <TableCell>
                       <Badge variant="outline" className="font-bold font-mono">
-                        {(match.score * 100).toFixed(0)}%
+                        {match.score.toFixed(0)}%
                       </Badge>
                     </TableCell>
                     <TableCell>{getStatusBadge(match.status)}</TableCell>
@@ -123,7 +123,7 @@ export default function Matches() {
             </DialogHeader>
             <div className="space-y-4">
               <div className="flex items-center gap-4">
-                <Badge variant="outline" className="text-lg px-4 py-1">{(selectedMatch.score * 100).toFixed(0)}% Match</Badge>
+                <Badge variant="outline" className="text-lg px-4 py-1">{selectedMatch.score.toFixed(0)}% Match</Badge>
                 {getStatusBadge(selectedMatch.status)}
               </div>
               <div className="grid grid-cols-2 gap-4 text-sm">
