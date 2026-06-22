@@ -3,13 +3,21 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Central da Casa Property Finder API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: clientes
+    description: Client operations
+  - name: imoveis
+    description: Property operations
+  - name: matches
+    description: Match operations
+  - name: dashboard
+    description: Dashboard statistics
 paths:
   /healthz:
     get:
@@ -24,6 +32,253 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags: [dashboard]
+      summary: Get dashboard statistics
+      description: Returns totals for clients, properties, and matches
+      responses:
+        "200":
+          description: Dashboard statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /clientes:
+    get:
+      operationId: listClientes
+      tags: [clientes]
+      summary: List all clients
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: search
+          in: query
+          schema:
+            type: ["string", "null"]
+      responses:
+        "200":
+          description: List of clients
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClienteList"
+    post:
+      operationId: createCliente
+      tags: [clientes]
+      summary: Create a new client
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClienteInput"
+      responses:
+        "201":
+          description: Created client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cliente"
+
+  /clientes/{id}:
+    get:
+      operationId: getCliente
+      tags: [clientes]
+      summary: Get a client by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cliente"
+        "404":
+          description: Not found
+    put:
+      operationId: updateCliente
+      tags: [clientes]
+      summary: Update a client
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClienteInput"
+      responses:
+        "200":
+          description: Updated client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cliente"
+        "404":
+          description: Not found
+    delete:
+      operationId: deleteCliente
+      tags: [clientes]
+      summary: Delete a client
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /imoveis:
+    get:
+      operationId: listImoveis
+      tags: [imoveis]
+      summary: List all properties
+      parameters:
+        - name: cidade
+          in: query
+          schema:
+            type: ["string", "null"]
+        - name: bairro
+          in: query
+          schema:
+            type: ["string", "null"]
+        - name: tipo
+          in: query
+          schema:
+            type: ["string", "null"]
+        - name: precoMin
+          in: query
+          schema:
+            type: ["number", "null"]
+        - name: precoMax
+          in: query
+          schema:
+            type: ["number", "null"]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: List of properties
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImovelList"
+
+  /imoveis/{id}:
+    get:
+      operationId: getImovel
+      tags: [imoveis]
+      summary: Get a property by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Property
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Imovel"
+        "404":
+          description: Not found
+
+  /matches:
+    get:
+      operationId: listMatches
+      tags: [matches]
+      summary: List all matches
+      responses:
+        "200":
+          description: List of matches
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Match"
+
+  /matches/cliente/{clienteId}:
+    get:
+      operationId: getMatchesForCliente
+      tags: [matches]
+      summary: Get matches for a client (calculates scores)
+      parameters:
+        - name: clienteId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Scored matches for client
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MatchResult"
+        "404":
+          description: Client not found
+
+  /matches/{id}/status:
+    patch:
+      operationId: updateMatchStatus
+      tags: [matches]
+      summary: Update match status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MatchStatusUpdate"
+      responses:
+        "200":
+          description: Updated match
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Match"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +289,187 @@ components:
       required:
         - status
 
+    DashboardStats:
+      type: object
+      required: [totalClientes, totalImoveis, totalMatches, imovelPorTipo]
+      properties:
+        totalClientes:
+          type: integer
+        totalImoveis:
+          type: integer
+        totalMatches:
+          type: integer
+        imovelPorTipo:
+          type: array
+          items:
+            $ref: "#/components/schemas/ImovelTipoCount"
+
+    ImovelTipoCount:
+      type: object
+      required: [tipo, count]
+      properties:
+        tipo:
+          type: string
+        count:
+          type: integer
+
+    Cliente:
+      type: object
+      required: [id, nome, telefone, tipoImovelDesejado, cidade, precoMinimo, precoMaximo, quartosMinimos, createdAt, updatedAt]
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        telefone:
+          type: string
+        tipoImovelDesejado:
+          type: string
+        cidade:
+          type: string
+        bairroPreferido:
+          type: ["string", "null"]
+        precoMinimo:
+          type: number
+        precoMaximo:
+          type: number
+        quartosMinimos:
+          type: integer
+        observacoes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+
+    ClienteInput:
+      type: object
+      required: [nome, telefone, tipoImovelDesejado, cidade, precoMinimo, precoMaximo, quartosMinimos]
+      properties:
+        nome:
+          type: string
+          minLength: 1
+        telefone:
+          type: string
+          minLength: 1
+        tipoImovelDesejado:
+          type: string
+          minLength: 1
+        cidade:
+          type: string
+          minLength: 1
+        bairroPreferido:
+          type: ["string", "null"]
+        precoMinimo:
+          type: number
+        precoMaximo:
+          type: number
+        quartosMinimos:
+          type: integer
+        observacoes:
+          type: ["string", "null"]
+
+    ClienteList:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Cliente"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    Imovel:
+      type: object
+      required: [id, fonte, tipo, cidade, bairro, preco, area, quartos, banheiros, vagas, createdAt, updatedAt]
+      properties:
+        id:
+          type: integer
+        fonte:
+          type: string
+        codigoExterno:
+          type: ["string", "null"]
+        tipo:
+          type: string
+        cidade:
+          type: string
+        bairro:
+          type: string
+        preco:
+          type: number
+        area:
+          type: number
+        quartos:
+          type: integer
+        banheiros:
+          type: integer
+        vagas:
+          type: integer
+        descricao:
+          type: ["string", "null"]
+        urlOriginal:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+
+    ImovelList:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Imovel"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    Match:
+      type: object
+      required: [id, clienteId, imovelId, score, status, createdAt]
+      properties:
+        id:
+          type: integer
+        clienteId:
+          type: integer
+        imovelId:
+          type: integer
+        score:
+          type: number
+        status:
+          type: string
+          enum: [NOVO, VISUALIZADO, INTERESSADO, DESCARTADO]
+        createdAt:
+          type: string
+
+    MatchResult:
+      type: object
+      required: [matchId, score, status, imovel]
+      properties:
+        matchId:
+          type: integer
+        score:
+          type: number
+        status:
+          type: string
+          enum: [NOVO, VISUALIZADO, INTERESSADO, DESCARTADO]
+        imovel:
+          $ref: "#/components/schemas/Imovel"
+
+    MatchStatusUpdate:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [NOVO, VISUALIZADO, INTERESSADO, DESCARTADO]

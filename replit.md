@@ -1,10 +1,11 @@
-# [Project name]
+# Central da Casa Property Finder
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+Ferramenta interna para corretores de imóveis cadastrarem clientes compradores e encontrarem imóveis compatíveis.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/api-server run dev` — run the API server (port 8080)
+- `pnpm --filter @workspace/app run dev` — run the frontend (port 23863)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
@@ -14,6 +15,7 @@ _Replace the heading above with the project's name, and this line with one sente
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
+- Frontend: React + Vite, TailwindCSS, shadcn/ui, TanStack Query
 - API: Express 5
 - DB: PostgreSQL + Drizzle ORM
 - Validation: Zod (`zod/v4`), `drizzle-zod`
@@ -22,23 +24,37 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `lib/api-spec/openapi.yaml` — API contract (source of truth)
+- `lib/db/src/schema/` — Drizzle table definitions (clientes, imoveis, matches)
+- `artifacts/api-server/src/routes/` — Express route handlers
+- `artifacts/api-server/src/lib/matching.ts` — Scoring/matching algorithm
+- `artifacts/app/src/` — React frontend (pages, components)
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Contract-first: OpenAPI spec → codegen → typed hooks + Zod validators
+- Matching is computed on-demand per client request; results are cached in the `matches` table and updated if the score changes
+- Score breakdown: 40pts price range, 20pts property type, 20pts bedroom count, 20pts preferred neighborhood (max 100)
+- Numeric DB fields (preco, area, score) stored as `numeric`; converted to `Number` in API responses
+- Seed: 10 fictional clients and 30 properties all in Timóteo (MG) bairros
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- **Dashboard**: totals (clients, properties, matches) and property breakdown by type
+- **Clientes**: paginated + searchable table, modal form for create/edit/delete
+- **Imóveis**: property catalog with filters (cidade, bairro, tipo, faixa de preço)
+- **Matches**: select client → see scored property matches ordered by score → update status (NOVO, VISUALIZADO, INTERESSADO, DESCARTADO) → view details
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- App language: Portuguese (pt-BR)
+- Prices formatted as BRL (R$)
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- After changing `openapi.yaml`, always run codegen before touching route or frontend code
+- `numeric` Drizzle columns return strings from the DB driver — always wrap with `Number()` before sending in responses
+- Express 5: use `res.status().json(); return;` not `return res.status().json()`
 
 ## Pointers
 

@@ -1,0 +1,261 @@
+Você é um arquiteto de software sênior responsável por construir a primeira versão de um sistema chamado "Central da Casa Property Finder".
+
+# Objetivo do Produto
+
+Este sistema é uma ferramenta interna para corretores de imóveis.
+
+O principal objetivo é permitir que um corretor cadastre clientes compradores e encontre imóveis compatíveis em uma base unificada.
+
+Neste MVP inicial NÃO implementar scraping ainda.
+
+Os imóveis serão cadastrados inicialmente por seed/mock para validar a experiência.
+
+# Stack Obrigatória
+
+Frontend:
+
+* React
+* Vite
+* TypeScript
+* React Router
+* TanStack Query
+* TailwindCSS
+* shadcn/ui
+
+Backend:
+
+* Node.js
+* Express
+* TypeScript
+* Knex
+
+Banco:
+
+* PostgreSQL
+
+# Arquitetura
+
+Criar monorepo contendo:
+
+/frontend
+/backend
+
+# Entidades
+
+## Cliente
+
+Campos:
+
+id
+nome
+telefone
+tipoImovelDesejado
+cidade
+bairroPreferido
+precoMinimo
+precoMaximo
+quartosMinimos
+observacoes
+createdAt
+updatedAt
+
+## Imovel
+
+Campos:
+
+id
+fonte
+codigoExterno
+tipo
+cidade
+bairro
+preco
+area
+quartos
+banheiros
+vagas
+descricao
+urlOriginal
+createdAt
+updatedAt
+
+## Match
+
+Campos:
+
+id
+clienteId
+imovelId
+score
+status
+
+Status possíveis:
+
+NOVO
+VISUALIZADO
+INTERESSADO
+DESCARTADO
+
+createdAt
+
+# Regras de Matching
+
+Criar serviço de matching.
+
+Pontuação:
+
+Preço dentro do intervalo:
+40 pontos
+
+Tipo do imóvel compatível:
+20 pontos
+
+Quantidade mínima de quartos atendida:
+20 pontos
+
+Bairro preferido:
+20 pontos
+
+Score máximo:
+100
+
+Retornar score percentual.
+
+# Seed Inicial
+
+Popular banco automaticamente com:
+
+10 clientes fictícios
+
+30 imóveis fictícios
+
+Variar bairros de Timóteo.
+
+# API REST
+
+Clientes:
+
+GET /clientes
+
+GET /clientes/
+
+POST /clientes
+
+PUT /clientes/
+
+DELETE /clientes/
+
+Imóveis:
+
+GET /imoveis
+
+GET /imoveis/
+
+Matches:
+
+GET /matches
+
+GET /matches/cliente/
+
+Ao consultar os matches do cliente, calcular automaticamente os scores.
+
+# Interface
+
+Layout moderno e profissional.
+
+Menu lateral.
+
+Tema claro.
+
+Responsivo.
+
+# Páginas
+
+Dashboard
+
+Clientes
+
+Imóveis
+
+Matches
+
+# Dashboard
+
+Exibir:
+
+Total de clientes
+
+Total de imóveis
+
+Total de matches
+
+# Clientes
+
+Tabela com paginação.
+
+Botão Novo Cliente.
+
+Modal para cadastro.
+
+# Imóveis
+
+Tabela de imóveis.
+
+Filtros por:
+
+Cidade
+
+Bairro
+
+Tipo
+
+Faixa de preço
+
+# Matches
+
+Selecionar cliente.
+
+Mostrar imóveis compatíveis ordenados por score.
+
+Exibir:
+
+Score
+
+Preço
+
+Bairro
+
+Cidade
+
+Tipo
+
+Botão para abrir detalhes.
+
+# Qualidade
+
+Utilizar boas práticas.
+
+Separar controllers, services e repositories.
+
+Criar tipagem completa.
+
+Código limpo e organizado.
+
+Preparar estrutura para futura implementação de:
+
+* Scrapers
+* Alertas automáticos
+* Multiusuário
+* Compartilhamento entre imobiliárias
+
+# Entrega
+
+Gerar o projeto completo já funcional.
+
+Configurar banco.
+
+Criar migrations.
+
+Criar seeds.
+
+Gerar README com instruções para execução.
