@@ -177,6 +177,14 @@ paths:
           in: query
           schema:
             type: ["number", "null"]
+        - name: quartos
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: vagas
+          in: query
+          schema:
+            type: ["integer", "null"]
         - name: page
           in: query
           schema:

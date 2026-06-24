@@ -27,6 +27,14 @@ precoMin?: number | null;
  * @nullable
  */
 precoMax?: number | null;
+/**
+ * @nullable
+ */
+quartos?: number | null;
+/**
+ * @nullable
+ */
+vagas?: number | null;
 page?: number;
 limit?: number;
 };
