@@ -51,7 +51,8 @@ export class HelenaConnector implements PropertyConnector {
         Accept: "text/html,application/xhtml+xml",
       },
     });
-    return res.text();
+    const buffer = await res.arrayBuffer();
+    return new TextDecoder("iso-8859-1").decode(buffer);
   }
 
   private parseCards(html: string): PropertyImportData[] {
