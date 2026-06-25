@@ -181,6 +181,7 @@ export const ListImoveisResponse = zod.object({
   "data": zod.array(zod.object({
   "id": zod.number(),
   "fonte": zod.string(),
+  "identificadorOrigem": zod.string().nullish(),
   "codigoExterno": zod.string().nullish(),
   "tipo": zod.string(),
   "cidade": zod.string(),
@@ -211,6 +212,7 @@ export const GetImovelParams = zod.object({
 export const GetImovelResponse = zod.object({
   "id": zod.number(),
   "fonte": zod.string(),
+  "identificadorOrigem": zod.string().nullish(),
   "codigoExterno": zod.string().nullish(),
   "tipo": zod.string(),
   "cidade": zod.string(),
@@ -255,6 +257,7 @@ export const GetMatchesForClienteResponseItem = zod.object({
   "imovel": zod.object({
   "id": zod.number(),
   "fonte": zod.string(),
+  "identificadorOrigem": zod.string().nullish(),
   "codigoExterno": zod.string().nullish(),
   "tipo": zod.string(),
   "cidade": zod.string(),
@@ -271,6 +274,96 @@ export const GetMatchesForClienteResponseItem = zod.object({
 })
 })
 export const GetMatchesForClienteResponse = zod.array(GetMatchesForClienteResponseItem)
+
+
+/**
+ * @summary List all import sources
+ */
+export const ListFontesResponseItem = zod.object({
+  "id": zod.number(),
+  "nome": zod.string(),
+  "url": zod.string(),
+  "ativo": zod.boolean(),
+  "ultimaExecucao": zod.string().nullish(),
+  "ultimoStatus": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+export const ListFontesResponse = zod.array(ListFontesResponseItem)
+
+
+/**
+ * @summary Create an import source
+ */
+
+
+export const createFonteBodyAtivoDefault = true;
+
+export const CreateFonteBody = zod.object({
+  "nome": zod.string().min(1),
+  "url": zod.string().min(1),
+  "ativo": zod.boolean().default(createFonteBodyAtivoDefault),
+  "ultimaExecucao": zod.string().nullish(),
+  "ultimoStatus": zod.string().nullish()
+})
+
+
+/**
+ * @summary Get an import source by ID
+ */
+export const GetFonteParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const GetFonteResponse = zod.object({
+  "id": zod.number(),
+  "nome": zod.string(),
+  "url": zod.string(),
+  "ativo": zod.boolean(),
+  "ultimaExecucao": zod.string().nullish(),
+  "ultimoStatus": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+
+
+/**
+ * @summary Update an import source
+ */
+export const UpdateFonteParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+
+
+export const updateFonteBodyAtivoDefault = true;
+
+export const UpdateFonteBody = zod.object({
+  "nome": zod.string().min(1),
+  "url": zod.string().min(1),
+  "ativo": zod.boolean().default(updateFonteBodyAtivoDefault),
+  "ultimaExecucao": zod.string().nullish(),
+  "ultimoStatus": zod.string().nullish()
+})
+
+export const UpdateFonteResponse = zod.object({
+  "id": zod.number(),
+  "nome": zod.string(),
+  "url": zod.string(),
+  "ativo": zod.boolean(),
+  "ultimaExecucao": zod.string().nullish(),
+  "ultimoStatus": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+
+
+/**
+ * @summary Delete an import source
+ */
+export const DeleteFonteParams = zod.object({
+  "id": zod.coerce.number()
+})
 
 
 /**

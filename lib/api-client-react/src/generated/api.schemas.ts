@@ -67,6 +67,8 @@ export interface Imovel {
   id: number;
   fonte: string;
   /** @nullable */
+  identificadorOrigem?: string | null;
+  /** @nullable */
   codigoExterno?: string | null;
   tipo: string;
   cidade: string;
@@ -139,6 +141,31 @@ export const MatchStatusUpdateStatus = {
 
 export interface MatchStatusUpdate {
   status: MatchStatusUpdateStatus;
+}
+
+export interface FonteImportacao {
+  id: number;
+  nome: string;
+  url: string;
+  ativo: boolean;
+  /** @nullable */
+  ultimaExecucao?: string | null;
+  /** @nullable */
+  ultimoStatus?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FonteImportacaoInput {
+  /** @minLength 1 */
+  nome: string;
+  /** @minLength 1 */
+  url: string;
+  ativo?: boolean;
+  /** @nullable */
+  ultimaExecucao?: string | null;
+  /** @nullable */
+  ultimoStatus?: string | null;
 }
 
 export type ListClientesParams = {

@@ -8,6 +8,7 @@ import Dashboard from "@/pages/Dashboard";
 import Clientes from "@/pages/Clientes";
 import Imoveis from "@/pages/Imoveis";
 import Matches from "@/pages/Matches";
+import Fontes from "@/pages/Fontes";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ function Router() {
         <Route path="/clientes" component={Clientes} />
         <Route path="/imoveis" component={Imoveis} />
         <Route path="/matches" component={Matches} />
+        <Route path="/fontes" component={Fontes} />
         <Route component={NotFound} />
       </Switch>
     </AppLayout>

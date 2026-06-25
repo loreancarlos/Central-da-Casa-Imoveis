@@ -18,6 +18,8 @@ tags:
     description: Match operations
   - name: dashboard
     description: Dashboard statistics
+  - name: fontes
+    description: Import source operations
 paths:
   /healthz:
     get:
@@ -262,6 +264,97 @@ paths:
         "404":
           description: Client not found
 
+  /fontes:
+    get:
+      operationId: listFontes
+      tags: [fontes]
+      summary: List all import sources
+      responses:
+        "200":
+          description: List of import sources
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FonteImportacao"
+    post:
+      operationId: createFonte
+      tags: [fontes]
+      summary: Create an import source
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FonteImportacaoInput"
+      responses:
+        "201":
+          description: Created import source
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FonteImportacao"
+
+  /fontes/{id}:
+    get:
+      operationId: getFonte
+      tags: [fontes]
+      summary: Get an import source by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Import source
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FonteImportacao"
+        "404":
+          description: Not found
+    put:
+      operationId: updateFonte
+      tags: [fontes]
+      summary: Update an import source
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FonteImportacaoInput"
+      responses:
+        "200":
+          description: Updated import source
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FonteImportacao"
+        "404":
+          description: Not found
+    delete:
+      operationId: deleteFonte
+      tags: [fontes]
+      summary: Delete an import source
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
   /matches/{id}/status:
     patch:
       operationId: updateMatchStatus
@@ -400,6 +493,8 @@ components:
           type: integer
         fonte:
           type: string
+        identificadorOrigem:
+          type: ["string", "null"]
         codigoExterno:
           type: ["string", "null"]
         tipo:
@@ -481,3 +576,42 @@ components:
         status:
           type: string
           enum: [NOVO, VISUALIZADO, INTERESSADO, DESCARTADO]
+
+    FonteImportacao:
+      type: object
+      required: [id, nome, url, ativo, createdAt, updatedAt]
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        url:
+          type: string
+        ativo:
+          type: boolean
+        ultimaExecucao:
+          type: ["string", "null"]
+        ultimoStatus:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+
+    FonteImportacaoInput:
+      type: object
+      required: [nome, url]
+      properties:
+        nome:
+          type: string
+          minLength: 1
+        url:
+          type: string
+          minLength: 1
+        ativo:
+          type: boolean
+          default: true
+        ultimaExecucao:
+          type: ["string", "null"]
+        ultimoStatus:
+          type: ["string", "null"]

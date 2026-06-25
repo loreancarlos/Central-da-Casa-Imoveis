@@ -25,7 +25,7 @@ Ferramenta interna para corretores de imóveis cadastrarem clientes compradores 
 ## Where things live
 
 - `lib/api-spec/openapi.yaml` — API contract (source of truth)
-- `lib/db/src/schema/` — Drizzle table definitions (clientes, imoveis, matches)
+- `lib/db/src/schema/` — Drizzle table definitions (clientes, imoveis, matches, fontes-importacao)
 - `artifacts/api-server/src/routes/` — Express route handlers
 - `artifacts/api-server/src/lib/matching.ts` — Scoring/matching algorithm
 - `artifacts/app/src/` — React frontend (pages, components)
@@ -42,19 +42,29 @@ Ferramenta interna para corretores de imóveis cadastrarem clientes compradores 
 
 - **Dashboard**: totals (clients, properties, matches) and property breakdown by type
 - **Clientes**: paginated + searchable table, modal form for create/edit/delete
-- **Imóveis**: property catalog with filters (cidade, bairro, tipo, faixa de preço)
+- **Imóveis**: property catalog with filters (cidade, bairro, tipo, faixa de preço, quartos, vagas)
 - **Matches**: select client → see scored property matches ordered by score → update status (NOVO, VISUALIZADO, INTERESSADO, DESCARTADO) → view details
+- **Fontes**: manage partner real estate import sources (CRUD), tracks nome, url, ativo, ultimaExecucao, ultimoStatus
 
 ## User preferences
 
 - App language: Portuguese (pt-BR)
 - Prices formatted as BRL (R$)
 
+## Multi-source import architecture
+
+- `imoveis.fonte` — name of the source that imported the property (e.g. "Helena Imóveis")
+- `imoveis.identificadorOrigem` — stable identifier from the connector (code, URL, etc.)
+- Unique partial index `(fonte, identificadorOrigem) WHERE identificadorOrigem IS NOT NULL` prevents duplicate imports per source
+- `fontes_importacao` table stores partner sources with activity tracking (ultimaExecucao, ultimoStatus)
+- Seed: Helena Imóveis, Casa Linhares, Minas Caixa — all active
+
 ## Gotchas
 
 - After changing `openapi.yaml`, always run codegen before touching route or frontend code
 - `numeric` Drizzle columns return strings from the DB driver — always wrap with `Number()` before sending in responses
 - Express 5: use `res.status().json(); return;` not `return res.status().json()`
+- Drizzle partial index `.where()` requires a `sql\`\`` expression, not a raw column reference
 
 ## Pointers
 

@@ -10,6 +10,8 @@ export interface Imovel {
   id: number;
   fonte: string;
   /** @nullable */
+  identificadorOrigem?: string | null;
+  /** @nullable */
   codigoExterno?: string | null;
   tipo: string;
   cidade: string;

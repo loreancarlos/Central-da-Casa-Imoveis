@@ -1,10 +1,12 @@
-import { pgTable, serial, text, numeric, integer, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, numeric, integer, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
+import { sql } from "drizzle-orm";
 import { z } from "zod/v4";
 
 export const imoveisTable = pgTable("imoveis", {
   id: serial("id").primaryKey(),
   fonte: text("fonte").notNull(),
+  identificadorOrigem: text("identificador_origem"),
   codigoExterno: text("codigo_externo"),
   tipo: text("tipo").notNull(),
   cidade: text("cidade").notNull(),
@@ -18,7 +20,11 @@ export const imoveisTable = pgTable("imoveis", {
   urlOriginal: text("url_original"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
-});
+}, (table) => [
+  uniqueIndex("imoveis_fonte_identificador_origem_idx")
+    .on(table.fonte, table.identificadorOrigem)
+    .where(sql`${table.identificadorOrigem} IS NOT NULL`),
+]);
 
 export const insertImovelSchema = createInsertSchema(imoveisTable).omit({ id: true, createdAt: true, updatedAt: true });
 export type InsertImovel = z.infer<typeof insertImovelSchema>;

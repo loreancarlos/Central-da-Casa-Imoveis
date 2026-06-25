@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { LayoutDashboard, Users, Home, Target } from "lucide-react";
+import { LayoutDashboard, Users, Home, Target, Building2 } from "lucide-react";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
@@ -9,6 +9,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     { href: "/clientes", label: "Clientes", icon: Users },
     { href: "/imoveis", label: "Imóveis", icon: Home },
     { href: "/matches", label: "Matches", icon: Target },
+    { href: "/fontes", label: "Fontes", icon: Building2 },
   ];
 
   return (

@@ -10,6 +10,8 @@ export * from './cliente';
 export * from './clienteInput';
 export * from './clienteList';
 export * from './dashboardStats';
+export * from './fonteImportacao';
+export * from './fonteImportacaoInput';
 export * from './healthStatus';
 export * from './imovel';
 export * from './imovelList';

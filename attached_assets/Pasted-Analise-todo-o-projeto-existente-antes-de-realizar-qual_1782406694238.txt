@@ -1,0 +1,175 @@
+Analise todo o projeto existente antes de realizar qualquer alteração.
+
+Objetivo desta tarefa:
+
+Preparar a aplicação para receber imóveis provenientes de múltiplas fontes externas (imobiliárias parceiras), sem implementar scraping ainda.
+
+IMPORTANTE:
+
+- Preserve a arquitetura atual do projeto.
+- Preserve o uso do Drizzle ORM já existente.
+- Preserve os padrões já adotados pelo sistema.
+- Não criar novas bibliotecas.
+- Não substituir tecnologias existentes.
+- Não implementar scraping nesta etapa.
+
+--------------------------------------------------
+
+ETAPA 1 — Ajustar modelo de imóveis
+
+Atualmente existe o conceito de codigoExterno.
+
+Remover a dependência conceitual de codigoExterno como identificador principal.
+
+Criar um novo campo:
+
+identificadorOrigem
+
+Tipo:
+string
+
+Descrição:
+
+Identificador único fornecido pelo conector responsável pela importação.
+
+Exemplos:
+
+Helena:
+identificadorOrigem = código do imóvel
+
+Casa Linhares:
+identificadorOrigem = URL do imóvel
+
+Outras fontes:
+identificadorOrigem = qualquer identificador estável definido pelo conector
+
+Este campo será utilizado futuramente para evitar duplicidades.
+
+--------------------------------------------------
+
+ETAPA 2 — Adicionar campo fonte
+
+Na tabela de imóveis adicionar:
+
+fonte
+
+Tipo:
+string
+
+Exemplos:
+
+Central da Casa
+Helena Imóveis
+Casa Linhares
+Minas Caixa
+
+Todo imóvel deverá possuir uma fonte.
+
+Para registros existentes:
+
+utilizar "Central da Casa" como valor padrão.
+
+--------------------------------------------------
+
+ETAPA 3 — Criar restrição de unicidade
+
+Criar índice único composto:
+
+(fonte, identificadorOrigem)
+
+Objetivo:
+
+Garantir que um mesmo imóvel importado não seja cadastrado duas vezes pela mesma fonte.
+
+--------------------------------------------------
+
+ETAPA 4 — Criar tabela de fontes de importação
+
+Criar nova entidade:
+
+fontesImportacao
+
+Campos:
+
+id
+nome
+url
+ativo
+ultimaExecucao
+ultimoStatus
+createdAt
+updatedAt
+
+Tipos adequados.
+
+--------------------------------------------------
+
+ETAPA 5 — Seed inicial
+
+Inserir automaticamente:
+
+Helena Imóveis
+https://www.helenaimoveis.com.br
+
+Casa Linhares
+https://www.casalinhares.com.br
+
+Minas Caixa
+https://www.minascaixaimoveis.com.br
+
+Todas ativas.
+
+--------------------------------------------------
+
+ETAPA 6 — Backend
+
+Criar endpoints REST:
+
+GET /api/fontes
+
+GET /api/fontes/:id
+
+POST /api/fontes
+
+PUT /api/fontes/:id
+
+DELETE /api/fontes/:id
+
+Seguir exatamente o padrão já utilizado pelo projeto.
+
+--------------------------------------------------
+
+ETAPA 7 — Frontend
+
+Criar nova página:
+
+Fontes
+
+Adicionar item ao menu lateral.
+
+Exibir tabela contendo:
+
+Nome
+URL
+Ativa
+Última Execução
+Último Status
+
+Criar modal de cadastro e edição.
+
+Utilizar os componentes visuais já existentes no projeto.
+
+--------------------------------------------------
+
+ETAPA 8 — Documentação
+
+Atualizar qualquer documentação interna necessária.
+
+Ao finalizar:
+
+1. Executar migrations.
+2. Atualizar seeds.
+3. Corrigir eventuais erros de tipagem.
+4. Garantir que a aplicação compile sem erros.
+
+Ao final da implementação, apresentar um resumo técnico das alterações realizadas.
