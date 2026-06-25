@@ -5,8 +5,10 @@ import router from "./routes";
 import { logger } from "./lib/logger";
 import { connectorRegistry } from "./connectors/registry";
 import { MockConnector } from "./connectors/mock.connector";
+import { HelenaConnector } from "./connectors/helena/HelenaConnector";
 
 connectorRegistry.register(new MockConnector());
+connectorRegistry.register(new HelenaConnector());
 
 const app: Express = express();
 

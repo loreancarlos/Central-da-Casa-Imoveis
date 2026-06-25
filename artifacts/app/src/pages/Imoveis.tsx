@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { LayoutGrid, List, BedDouble, Car, MapPin, Maximize2 } from "lucide-react";
+import { LayoutGrid, List, BedDouble, Car, MapPin, Maximize2, ExternalLink } from "lucide-react";
 
 function getPropertyImage(imovel: Imovel): string {
   return `https://picsum.photos/seed/imovel-${imovel.id}/640/360`;
@@ -212,6 +212,7 @@ export default function Imoveis() {
                 <TableHead>Preço</TableHead>
                 <TableHead>Características</TableHead>
                 <TableHead>Fonte</TableHead>
+                <TableHead>Anúncio</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -229,6 +230,22 @@ export default function Imoveis() {
                     </div>
                   </TableCell>
                   <TableCell><Badge variant="secondary">{imovel.fonte}</Badge></TableCell>
+                  <TableCell>
+                    {imovel.urlOriginal ? (
+                      <a
+                        href={imovel.urlOriginal}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                        title={imovel.urlOriginal}
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                        <span className="sr-only">Ver anúncio</span>
+                      </a>
+                    ) : (
+                      <span className="text-muted-foreground text-sm">—</span>
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

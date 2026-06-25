@@ -1,0 +1,174 @@
+Analise toda a arquitetura atual antes de realizar alterações.
+
+Objetivo desta tarefa:
+
+Implementar o primeiro conector real utilizando a infraestrutura já existente.
+
+Fonte:
+
+https://www.helenaimoveis.com.br/mobile/imovel/venda/todos/timoteo
+
+IMPORTANTE
+
+Antes de implementar qualquer solução:
+
+1. Verifique como a página é carregada.
+2. Identifique se os imóveis estão presentes no HTML inicial.
+3. Identifique se os dados são carregados via API.
+4. Identifique se existe paginação.
+5. Identifique se existe endpoint JSON consumido pelo site.
+
+NÃO utilizar Playwright nesta etapa.
+
+Utilizar a solução mais simples possível.
+
+Prioridade:
+
+1. HTML + parsing
+2. API pública consumida pelo site
+3. Somente se impossível, documentar necessidade futura de browser automation
+
+--------------------------------------------------
+
+ETAPA 1 — Criar conector HelenaConnector
+
+Criar estrutura:
+
+backend/src/connectors/helena
+
+Arquivos:
+
+HelenaConnector.ts
+
+Seguir exatamente a interface PropertyConnector existente.
+
+--------------------------------------------------
+
+ETAPA 2 — Descoberta dos imóveis
+
+Importar apenas os imóveis exibidos na listagem.
+
+Não acessar página de detalhes ainda.
+
+Extrair apenas:
+
+identificadorOrigem
+fonte
+tipo
+cidade
+bairro
+preco
+urlOriginal
+
+Campos não encontrados:
+
+utilizar null.
+
+--------------------------------------------------
+
+ETAPA 3 — Fonte
+
+Todos os imóveis importados devem possuir:
+
+fonte = "Helena Imóveis"
+
+--------------------------------------------------
+
+ETAPA 4 — Identificador
+
+Definir identificadorOrigem utilizando:
+
+1. Código do imóvel, se existir
+2. Caso não exista, URL do imóvel
+
+Deve ser estável entre importações.
+
+--------------------------------------------------
+
+ETAPA 5 — Registro do conector
+
+Registrar automaticamente HelenaConnector no ConnectorRegistry.
+
+--------------------------------------------------
+
+ETAPA 6 — Teste de importação
+
+Executar uma importação completa.
+
+Persistir os imóveis encontrados.
+
+Garantir que nova execução:
+
+- não crie duplicados
+- atualize registros existentes
+
+--------------------------------------------------
+
+ETAPA 7 — Melhorias na UI
+
+Na tela de imóveis:
+
+Adicionar coluna:
+
+Fonte
+
+Adicionar coluna:
+
+URL Original
+
+Permitir abrir o anúncio original em nova aba.
+
+--------------------------------------------------
+
+ETAPA 8 — Histórico
+
+Registrar corretamente:
+
+totalImportados
+totalAtualizados
+totalIgnorados
+
+--------------------------------------------------
+
+ETAPA 9 — Observabilidade
+
+Adicionar logs claros:
+
+Iniciando importação Helena
+Total encontrados
+Total importados
+Total atualizados
+Total ignorados
+Tempo total
+
+--------------------------------------------------
+
+RESTRIÇÕES
+
+NÃO implementar:
+
+- Playwright
+- Captura de fotos
+- Captura de descrição
+- Captura de quartos
+- Captura de banheiros
+- Captura de vagas
+- Captura de área
+- Geolocalização
+- IA
+
+Objetivo:
+
+Somente validar a importação da listagem de imóveis.
+
+--------------------------------------------------
+
+ENTREGA
+
+Ao final apresentar:
+
+1. Quantidade de imóveis encontrados.
+2. Estratégia utilizada (HTML ou API).
+3. Estrutura dos dados importados.
+4. Limitações identificadas.
+5. Recomendações para a próxima etapa.
