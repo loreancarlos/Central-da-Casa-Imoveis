@@ -8,9 +8,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { LayoutGrid, List, BedDouble, Car, Maximize2, MapPin } from "lucide-react";
+import { LayoutGrid, List, BedDouble, Car, Maximize2, MapPin, ChevronsUpDown, Check } from "lucide-react";
 
 function getPropertyImage(id: number): string {
   return `https://picsum.photos/seed/imovel-${id}/640/360`;
@@ -116,6 +118,7 @@ export default function Matches() {
   const [selectedClienteId, setSelectedClienteId] = useState<number | null>(null);
   const [selectedMatch, setSelectedMatch] = useState<MatchResult | null>(null);
   const [view, setView] = useState<"gallery" | "table">("gallery");
+  const [comboOpen, setComboOpen] = useState(false);
 
   const { data: clientesData } = useListClientes({ limit: 100 });
 
@@ -162,16 +165,46 @@ export default function Matches() {
       </div>
 
       <div className="w-full max-w-md">
-        <Select onValueChange={(val) => setSelectedClienteId(Number(val))}>
-          <SelectTrigger>
-            <SelectValue placeholder="Selecione um cliente..." />
-          </SelectTrigger>
-          <SelectContent>
-            {clientesData?.data.map((c) => (
-              <SelectItem key={c.id} value={c.id.toString()}>{c.nome}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <Popover open={comboOpen} onOpenChange={setComboOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={comboOpen}
+              className="w-full justify-between font-normal"
+            >
+              {selectedClienteId
+                ? clientesData?.data.find((c) => c.id === selectedClienteId)?.nome
+                : "Selecione um cliente..."}
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-full max-w-md p-0" align="start">
+            <Command>
+              <CommandInput placeholder="Buscar cliente..." autoFocus />
+              <CommandList>
+                <CommandEmpty>Nenhum cliente encontrado.</CommandEmpty>
+                <CommandGroup>
+                  {clientesData?.data.map((c) => (
+                    <CommandItem
+                      key={c.id}
+                      value={c.nome}
+                      onSelect={() => {
+                        setSelectedClienteId(c.id);
+                        setComboOpen(false);
+                      }}
+                    >
+                      <Check
+                        className={`mr-2 h-4 w-4 ${selectedClienteId === c.id ? "opacity-100" : "opacity-0"}`}
+                      />
+                      {c.nome}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
       </div>
 
       {selectedClienteId && (
