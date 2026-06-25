@@ -73,7 +73,7 @@ export class HelenaConnector implements PropertyConnector {
       const localMatch = cardHtml.match(/class="imovelcard__info__local">([^<]+)<\/h2>/);
       const localText = localMatch ? decodeHtml(localMatch[1].trim()) : "";
       const [rawBairro, rawCidade] = localText.split(",");
-      const bairro = rawBairro?.trim() || "";
+      const bairro = toTitleCase(rawBairro?.trim() || "");
       const cidade = rawCidade?.split("/")?.[0]?.trim() || "Timóteo";
 
       // tipo
@@ -104,6 +104,12 @@ export class HelenaConnector implements PropertyConnector {
 
     return results;
   }
+}
+
+function toTitleCase(str: string): string {
+  return str
+    .toLowerCase()
+    .replace(/(?:^|\s)\S/g, (c) => c.toUpperCase());
 }
 
 function decodeHtml(str: string): string {

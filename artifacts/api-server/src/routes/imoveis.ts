@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { eq, sql, and, gte, lte } from "drizzle-orm";
+import { sql, and, gte, lte } from "drizzle-orm";
 import { db, imoveisTable } from "@workspace/db";
 import {
   ListImoveisQueryParams,
@@ -20,9 +20,9 @@ router.get("/imoveis", async (req, res): Promise<void> => {
   const offset = (page - 1) * limit;
 
   const conditions = [];
-  if (cidade) conditions.push(eq(imoveisTable.cidade, cidade));
-  if (bairro) conditions.push(eq(imoveisTable.bairro, bairro));
-  if (tipo) conditions.push(eq(imoveisTable.tipo, tipo));
+  if (cidade) conditions.push(sql`${imoveisTable.cidade} ILIKE ${"%" + cidade + "%"}`);
+  if (bairro) conditions.push(sql`${imoveisTable.bairro} ILIKE ${"%" + bairro + "%"}`);
+  if (tipo) conditions.push(sql`${imoveisTable.tipo} ILIKE ${"%" + tipo + "%"}`);
   if (precoMin != null) conditions.push(gte(imoveisTable.preco, String(precoMin)));
   if (precoMax != null) conditions.push(lte(imoveisTable.preco, String(precoMax)));
   if (quartos != null) conditions.push(gte(imoveisTable.quartos, quartos));
