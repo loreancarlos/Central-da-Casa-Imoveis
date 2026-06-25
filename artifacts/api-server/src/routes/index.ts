@@ -5,6 +5,7 @@ import imoveisRouter from "./imoveis";
 import matchesRouter from "./matches";
 import dashboardRouter from "./dashboard";
 import fontesRouter from "./fontes";
+import connectorsRouter from "./connectors";
 
 const router: IRouter = Router();
 
@@ -14,5 +15,6 @@ router.use(clientesRouter);
 router.use(imoveisRouter);
 router.use(matchesRouter);
 router.use(fontesRouter);
+router.use(connectorsRouter);
 
 export default router;

@@ -9,6 +9,8 @@ import Clientes from "@/pages/Clientes";
 import Imoveis from "@/pages/Imoveis";
 import Matches from "@/pages/Matches";
 import Fontes from "@/pages/Fontes";
+import Conectores from "@/pages/Conectores";
+import Historico from "@/pages/Historico";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +23,8 @@ function Router() {
         <Route path="/imoveis" component={Imoveis} />
         <Route path="/matches" component={Matches} />
         <Route path="/fontes" component={Fontes} />
+        <Route path="/conectores" component={Conectores} />
+        <Route path="/historico" component={Historico} />
         <Route component={NotFound} />
       </Switch>
     </AppLayout>

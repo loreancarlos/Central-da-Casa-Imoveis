@@ -367,6 +367,48 @@ export const DeleteFonteParams = zod.object({
 
 
 /**
+ * @summary List registered connectors
+ */
+export const ListConnectorsResponseItem = zod.object({
+  "nome": zod.string()
+})
+export const ListConnectorsResponse = zod.array(ListConnectorsResponseItem)
+
+
+/**
+ * @summary Run import for a connector
+ */
+export const RunConnectorImportParams = zod.object({
+  "nome": zod.coerce.string()
+})
+
+export const RunConnectorImportResponse = zod.object({
+  "sucesso": zod.boolean(),
+  "importados": zod.number(),
+  "atualizados": zod.number(),
+  "ignorados": zod.number()
+})
+
+
+/**
+ * @summary List import history
+ */
+export const ListImportacoesResponseItem = zod.object({
+  "id": zod.number(),
+  "fonte": zod.string(),
+  "inicioExecucao": zod.string(),
+  "fimExecucao": zod.string().nullish(),
+  "totalImportados": zod.number(),
+  "totalAtualizados": zod.number(),
+  "totalIgnorados": zod.number(),
+  "status": zod.string(),
+  "mensagem": zod.string().nullish(),
+  "createdAt": zod.string()
+})
+export const ListImportacoesResponse = zod.array(ListImportacoesResponseItem)
+
+
+/**
  * @summary Update match status
  */
 export const UpdateMatchStatusParams = zod.object({

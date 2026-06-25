@@ -20,6 +20,10 @@ tags:
     description: Dashboard statistics
   - name: fontes
     description: Import source operations
+  - name: connectors
+    description: Connector registry operations
+  - name: importacoes
+    description: Import history operations
 paths:
   /healthz:
     get:
@@ -355,6 +359,57 @@ paths:
         "204":
           description: Deleted
 
+  /connectors:
+    get:
+      operationId: listConnectors
+      tags: [connectors]
+      summary: List registered connectors
+      responses:
+        "200":
+          description: List of connectors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ConnectorInfo"
+
+  /connectors/{nome}/importar:
+    post:
+      operationId: runConnectorImport
+      tags: [connectors]
+      summary: Run import for a connector
+      parameters:
+        - name: nome
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Import result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImportStats"
+        "404":
+          description: Connector not found
+
+  /importacoes:
+    get:
+      operationId: listImportacoes
+      tags: [importacoes]
+      summary: List import history
+      responses:
+        "200":
+          description: List of import history records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HistoricoImportacao"
+
   /matches/{id}/status:
     patch:
       operationId: updateMatchStatus
@@ -615,3 +670,48 @@ components:
           type: ["string", "null"]
         ultimoStatus:
           type: ["string", "null"]
+
+    ConnectorInfo:
+      type: object
+      required: [nome]
+      properties:
+        nome:
+          type: string
+
+    ImportStats:
+      type: object
+      required: [sucesso, importados, atualizados, ignorados]
+      properties:
+        sucesso:
+          type: boolean
+        importados:
+          type: integer
+        atualizados:
+          type: integer
+        ignorados:
+          type: integer
+
+    HistoricoImportacao:
+      type: object
+      required: [id, fonte, inicioExecucao, totalImportados, totalAtualizados, totalIgnorados, status, createdAt]
+      properties:
+        id:
+          type: integer
+        fonte:
+          type: string
+        inicioExecucao:
+          type: string
+        fimExecucao:
+          type: ["string", "null"]
+        totalImportados:
+          type: integer
+        totalAtualizados:
+          type: integer
+        totalIgnorados:
+          type: integer
+        status:
+          type: string
+        mensagem:
+          type: ["string", "null"]
+        createdAt:
+          type: string

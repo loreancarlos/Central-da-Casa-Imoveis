@@ -168,6 +168,32 @@ export interface FonteImportacaoInput {
   ultimoStatus?: string | null;
 }
 
+export interface ConnectorInfo {
+  nome: string;
+}
+
+export interface ImportStats {
+  sucesso: boolean;
+  importados: number;
+  atualizados: number;
+  ignorados: number;
+}
+
+export interface HistoricoImportacao {
+  id: number;
+  fonte: string;
+  inicioExecucao: string;
+  /** @nullable */
+  fimExecucao?: string | null;
+  totalImportados: number;
+  totalAtualizados: number;
+  totalIgnorados: number;
+  status: string;
+  /** @nullable */
+  mensagem?: string | null;
+  createdAt: string;
+}
+
 export type ListClientesParams = {
 page?: number;
 limit?: number;

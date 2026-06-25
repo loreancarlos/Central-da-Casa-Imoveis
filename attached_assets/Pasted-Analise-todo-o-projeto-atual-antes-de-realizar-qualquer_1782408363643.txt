@@ -1,0 +1,295 @@
+Analise todo o projeto atual antes de realizar qualquer alteração.
+
+Objetivo desta tarefa:
+
+Criar a infraestrutura de conectores que permitirá importar imóveis de múltiplas fontes externas.
+
+IMPORTANTE:
+
+- NÃO implementar scraping nesta etapa.
+- NÃO consumir sites externos.
+- NÃO utilizar Playwright ainda.
+- NÃO utilizar Axios ainda.
+- NÃO criar lógica específica para Helena.
+- Criar apenas a infraestrutura genérica.
+
+Preservar a arquitetura atual do projeto.
+
+Continuar utilizando Drizzle ORM.
+
+--------------------------------------------------
+
+OBJETIVO
+
+Criar um sistema de conectores desacoplado.
+
+No futuro existirão conectores como:
+
+Helena Imóveis
+Casa Linhares
+Minas Caixa
+Outras imobiliárias
+
+Todos deverão seguir o mesmo contrato interno.
+
+--------------------------------------------------
+
+ETAPA 1 — Criar diretório connectors
+
+Criar estrutura:
+
+backend/src/connectors
+
+--------------------------------------------------
+
+ETAPA 2 — Criar contrato padrão
+
+Criar interface principal:
+
+PropertyImportData
+
+Representa um imóvel vindo de qualquer fonte.
+
+Campos:
+
+identificadorOrigem
+fonte
+tipo
+cidade
+bairro
+preco
+area
+quartos
+banheiros
+vagas
+descricao
+urlOriginal
+fotos
+
+Utilizar tipos adequados.
+
+Esta interface será o padrão interno de importação.
+
+Todos os conectores futuros deverão retornar exatamente este formato.
+
+--------------------------------------------------
+
+ETAPA 3 — Criar contrato de conector
+
+Criar interface:
+
+PropertyConnector
+
+Métodos:
+
+getName()
+
+importProperties()
+
+Retorno:
+
+Promise<PropertyImportData[]>
+
+Objetivo:
+
+Padronizar qualquer integração futura.
+
+--------------------------------------------------
+
+ETAPA 4 — Criar Registry de conectores
+
+Criar serviço:
+
+ConnectorRegistry
+
+Responsabilidades:
+
+Registrar conectores.
+
+Listar conectores disponíveis.
+
+Buscar conector por nome.
+
+Preparar sistema para crescimento futuro.
+
+--------------------------------------------------
+
+ETAPA 5 — Criar conector mock
+
+Criar:
+
+MockConnector
+
+Implementando PropertyConnector.
+
+Retornar 3 imóveis fictícios.
+
+Utilizar bairros reais de Timóteo.
+
+Objetivo:
+
+Validar toda a infraestrutura sem depender de scraping.
+
+--------------------------------------------------
+
+ETAPA 6 — Criar serviço de importação
+
+Criar:
+
+PropertyImportService
+
+Responsabilidades:
+
+Receber dados do conector.
+
+Converter para formato do banco.
+
+Inserir imóveis.
+
+Atualizar imóveis existentes.
+
+Evitar duplicação utilizando:
+
+(fonte + identificadorOrigem)
+
+Registrar quantidade:
+
+importados
+atualizados
+ignorados
+
+Retornar estatísticas da execução.
+
+--------------------------------------------------
+
+ETAPA 7 — Criar histórico de importações
+
+Criar tabela:
+
+historicoImportacoes
+
+Campos:
+
+id
+fonte
+inicioExecucao
+fimExecucao
+totalImportados
+totalAtualizados
+totalIgnorados
+status
+mensagem
+createdAt
+
+Objetivo:
+
+Auditoria das importações futuras.
+
+--------------------------------------------------
+
+ETAPA 8 — Criar endpoints
+
+GET /api/connectors
+
+Listar conectores registrados.
+
+--------------------------------------------------
+
+POST /api/connectors/:nome/importar
+
+Executar importação.
+
+Retornar:
+
+{
+  sucesso: true,
+  importados: 0,
+  atualizados: 0,
+  ignorados: 0
+}
+
+--------------------------------------------------
+
+GET /api/importacoes
+
+Listar histórico de importações.
+
+--------------------------------------------------
+
+ETAPA 9 — Frontend
+
+Criar página:
+
+Conectores
+
+Exibir:
+
+Nome
+Tipo
+Status
+
+Adicionar botão:
+
+Executar Importação
+
+Utilizar inicialmente o MockConnector.
+
+--------------------------------------------------
+
+Criar página:
+
+Histórico de Importações
+
+Exibir:
+
+Fonte
+Data
+Importados
+Atualizados
+Ignorados
+Status
+
+--------------------------------------------------
+
+ETAPA 10 — Integração
+
+Registrar automaticamente:
+
+MockConnector
+
+na inicialização da aplicação.
+
+Ao clicar em:
+
+Executar Importação
+
+o sistema deverá:
+
+1. Executar MockConnector
+2. Importar os imóveis
+3. Atualizar histórico
+4. Atualizar banco
+
+--------------------------------------------------
+
+IMPORTANTE
+
+Esta etapa NÃO deve conter:
+
+- scraping
+- Playwright
+- Axios
+- Helena Imóveis
+- Casa Linhares
+- Minas Caixa
+
+O objetivo é apenas validar a infraestrutura de conectores.
+
+Ao final:
+
+Executar migrations.
+Atualizar seeds.
+Corrigir tipagens.
+Garantir compilação sem erros.
+
+Apresentar relatório técnico das alterações realizadas.

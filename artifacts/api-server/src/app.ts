@@ -3,6 +3,10 @@ import cors from "cors";
 import pinoHttp from "pino-http";
 import router from "./routes";
 import { logger } from "./lib/logger";
+import { connectorRegistry } from "./connectors/registry";
+import { MockConnector } from "./connectors/mock.connector";
+
+connectorRegistry.register(new MockConnector());
 
 const app: Express = express();
 

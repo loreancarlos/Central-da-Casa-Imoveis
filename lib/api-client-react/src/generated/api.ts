@@ -23,12 +23,15 @@ import type {
   Cliente,
   ClienteInput,
   ClienteList,
+  ConnectorInfo,
   DashboardStats,
   FonteImportacao,
   FonteImportacaoInput,
   HealthStatus,
+  HistoricoImportacao,
   Imovel,
   ImovelList,
+  ImportStats,
   ListClientesParams,
   ListImoveisParams,
   Match,
@@ -1259,6 +1262,230 @@ export const useDeleteFonte = <TError = ErrorType<unknown>,
       > => {
       return useMutation(getDeleteFonteMutationOptions(options));
     }
+
+export const getListConnectorsUrl = () => {
+
+
+
+
+  return `/api/connectors`
+}
+
+/**
+ * @summary List registered connectors
+ */
+export const listConnectors = async ( options?: RequestInit): Promise<ConnectorInfo[]> => {
+
+  return customFetch<ConnectorInfo[]>(getListConnectorsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListConnectorsQueryKey = () => {
+    return [
+    `/api/connectors`
+    ] as const;
+    }
+
+
+export const getListConnectorsQueryOptions = <TData = Awaited<ReturnType<typeof listConnectors>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listConnectors>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListConnectorsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listConnectors>>> = ({ signal }) => listConnectors({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listConnectors>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListConnectorsQueryResult = NonNullable<Awaited<ReturnType<typeof listConnectors>>>
+export type ListConnectorsQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary List registered connectors
+ */
+
+export function useListConnectors<TData = Awaited<ReturnType<typeof listConnectors>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listConnectors>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListConnectorsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+
+export const getRunConnectorImportUrl = (nome: string,) => {
+
+
+
+
+  return `/api/connectors/${nome}/importar`
+}
+
+/**
+ * @summary Run import for a connector
+ */
+export const runConnectorImport = async (nome: string, options?: RequestInit): Promise<ImportStats> => {
+
+  return customFetch<ImportStats>(getRunConnectorImportUrl(nome),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+export const getRunConnectorImportMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof runConnectorImport>>, TError,{nome: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof runConnectorImport>>, TError,{nome: string}, TContext> => {
+
+const mutationKey = ['runConnectorImport'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof runConnectorImport>>, {nome: string}> = (props) => {
+          const {nome} = props ?? {};
+
+          return  runConnectorImport(nome,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RunConnectorImportMutationResult = NonNullable<Awaited<ReturnType<typeof runConnectorImport>>>
+
+    export type RunConnectorImportMutationError = ErrorType<void>
+
+    /**
+ * @summary Run import for a connector
+ */
+export const useRunConnectorImport = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof runConnectorImport>>, TError,{nome: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof runConnectorImport>>,
+        TError,
+        {nome: string},
+        TContext
+      > => {
+      return useMutation(getRunConnectorImportMutationOptions(options));
+    }
+
+export const getListImportacoesUrl = () => {
+
+
+
+
+  return `/api/importacoes`
+}
+
+/**
+ * @summary List import history
+ */
+export const listImportacoes = async ( options?: RequestInit): Promise<HistoricoImportacao[]> => {
+
+  return customFetch<HistoricoImportacao[]>(getListImportacoesUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListImportacoesQueryKey = () => {
+    return [
+    `/api/importacoes`
+    ] as const;
+    }
+
+
+export const getListImportacoesQueryOptions = <TData = Awaited<ReturnType<typeof listImportacoes>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listImportacoes>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListImportacoesQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listImportacoes>>> = ({ signal }) => listImportacoes({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listImportacoes>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListImportacoesQueryResult = NonNullable<Awaited<ReturnType<typeof listImportacoes>>>
+export type ListImportacoesQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary List import history
+ */
+
+export function useListImportacoes<TData = Awaited<ReturnType<typeof listImportacoes>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listImportacoes>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListImportacoesQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
 
 export const getUpdateMatchStatusUrl = (id: number,) => {
 
