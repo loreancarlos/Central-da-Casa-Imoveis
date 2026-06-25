@@ -8,11 +8,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { LayoutGrid, List, BedDouble, Car, Maximize2, MapPin, ChevronsUpDown, Check } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { LayoutGrid, List, BedDouble, Car, Maximize2, MapPin, X } from "lucide-react";
 
 function getPropertyImage(id: number): string {
   return `https://picsum.photos/seed/imovel-${id}/640/360`;
@@ -118,7 +117,7 @@ export default function Matches() {
   const [selectedClienteId, setSelectedClienteId] = useState<number | null>(null);
   const [selectedMatch, setSelectedMatch] = useState<MatchResult | null>(null);
   const [view, setView] = useState<"gallery" | "table">("gallery");
-  const [comboOpen, setComboOpen] = useState(false);
+  const [search, setSearch] = useState("");
 
   const { data: clientesData } = useListClientes({ limit: 100 });
 
@@ -164,47 +163,47 @@ export default function Matches() {
         </div>
       </div>
 
-      <div className="w-full max-w-md">
-        <Popover open={comboOpen} onOpenChange={setComboOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              role="combobox"
-              aria-expanded={comboOpen}
-              className="w-full justify-between font-normal"
+      <div className="w-full max-w-md space-y-1">
+        <div className="relative">
+          <Input
+            placeholder="Buscar cliente..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setSelectedClienteId(null);
+            }}
+          />
+          {search && (
+            <button
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              onClick={() => { setSearch(""); setSelectedClienteId(null); }}
             >
-              {selectedClienteId
-                ? clientesData?.data.find((c) => c.id === selectedClienteId)?.nome
-                : "Selecione um cliente..."}
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-full max-w-md p-0" align="start">
-            <Command>
-              <CommandInput placeholder="Buscar cliente..." autoFocus />
-              <CommandList>
-                <CommandEmpty>Nenhum cliente encontrado.</CommandEmpty>
-                <CommandGroup>
-                  {clientesData?.data.map((c) => (
-                    <CommandItem
-                      key={c.id}
-                      value={c.nome}
-                      onSelect={() => {
-                        setSelectedClienteId(c.id);
-                        setComboOpen(false);
-                      }}
-                    >
-                      <Check
-                        className={`mr-2 h-4 w-4 ${selectedClienteId === c.id ? "opacity-100" : "opacity-0"}`}
-                      />
-                      {c.nome}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </CommandList>
-            </Command>
-          </PopoverContent>
-        </Popover>
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+        {search && !selectedClienteId && (() => {
+          const filtered = clientesData?.data.filter((c) =>
+            c.nome.toLowerCase().includes(search.toLowerCase())
+          ) ?? [];
+          return (
+            <div className="border rounded-md bg-popover shadow-md overflow-hidden">
+              {filtered.length === 0 ? (
+                <p className="px-3 py-2 text-sm text-muted-foreground">Nenhum cliente encontrado.</p>
+              ) : (
+                filtered.map((c) => (
+                  <button
+                    key={c.id}
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-muted transition-colors"
+                    onClick={() => { setSelectedClienteId(c.id); setSearch(c.nome); }}
+                  >
+                    {c.nome}
+                  </button>
+                ))
+              )}
+            </div>
+          );
+        })()}
       </div>
 
       {selectedClienteId && (
