@@ -234,7 +234,7 @@ function extractDescricao(html: string): string | null {
   for (const pat of patterns) {
     const m = html.match(pat);
     if (m) {
-      const text = m[1].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+      const text = decodeHtml(m[1].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim());
       if (text.length > 30) return text.slice(0, 800);
     }
   }

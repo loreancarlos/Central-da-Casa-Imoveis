@@ -12,9 +12,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { LayoutGrid, List, BedDouble, Car, Maximize2, MapPin, X } from "lucide-react";
+import type { Imovel } from "@workspace/api-client-react";
 
-function getPropertyImage(id: number): string {
-  return `https://picsum.photos/seed/imovel-${id}/640/360`;
+function getPropertyImage(imovel: Imovel): string {
+  return imovel.fotos && imovel.fotos.length > 0
+    ? imovel.fotos[0]
+    : `https://picsum.photos/seed/imovel-${imovel.id}/640/360`;
 }
 
 const STATUS_CONFIG = {
@@ -56,8 +59,9 @@ function MatchCard({ match, onClick, onStatusChange }: {
         onClick={onClick}
       >
         <img
-          src={getPropertyImage(match.imovel.id)}
+          src={getPropertyImage(match.imovel)}
           alt={`${match.imovel.tipo} em ${match.imovel.bairro}`}
+          onError={(e) => { (e.target as HTMLImageElement).src = `https://picsum.photos/seed/imovel-${match.imovel.id}/640/360`; }}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
         />
@@ -288,9 +292,10 @@ export default function Matches() {
           <DialogContent className="max-w-xl overflow-hidden p-0">
             <div className="relative h-52 overflow-hidden">
               <img
-                src={getPropertyImage(selectedMatch.imovel.id)}
+                src={getPropertyImage(selectedMatch.imovel)}
                 alt={selectedMatch.imovel.tipo}
                 className="w-full h-full object-cover"
+                onError={(e) => { (e.target as HTMLImageElement).src = `https://picsum.photos/seed/imovel-${selectedMatch.imovel.id}/640/360`; }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               <div className="absolute bottom-4 left-4 flex items-center gap-2">

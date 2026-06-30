@@ -196,6 +196,7 @@ function ImovelCard({ imovel, onClick }: { imovel: Imovel; onClick: () => void }
             <MapPin className="h-3 w-3 shrink-0" />
             <span className="truncate">{imovel.bairro}, {imovel.cidade}</span>
           </div>
+          <p className="text-xs text-muted-foreground/70 mt-0.5">{imovel.fonte}</p>
         </div>
         <div className="flex items-center gap-4 text-sm text-muted-foreground border-t pt-3">
           <div className="flex items-center gap-1">
@@ -234,12 +235,19 @@ export default function Imoveis() {
   const [tipo, setTipo] = useState("");
   const [quartos, setQuartos] = useState("");
   const [vagas, setVagas] = useState("");
+  const [precoMin, setPrecoMin] = useState("");
+  const [precoMax, setPrecoMax] = useState("");
   const [selected, setSelected] = useState<Imovel | null>(null);
 
   const parseMin = (val: string) => {
     if (!val) return undefined;
     const n = parseInt(val.replace("+", ""), 10);
     return isNaN(n) ? undefined : n;
+  };
+
+  const parsePrice = (val: string) => {
+    const n = parseFloat(val.replace(/\./g, "").replace(",", "."));
+    return isNaN(n) || n <= 0 ? undefined : n;
   };
 
   const { data, isLoading } = useListImoveis({
@@ -250,6 +258,8 @@ export default function Imoveis() {
     bairro: bairro || undefined,
     quartos: parseMin(quartos),
     vagas: parseMin(vagas),
+    precoMin: parsePrice(precoMin),
+    precoMax: parsePrice(precoMax),
   });
 
   const hasResults = (data?.data?.length ?? 0) > 0;
@@ -327,8 +337,24 @@ export default function Imoveis() {
             ))}
           </SelectContent>
         </Select>
-        {(cidade || bairro || tipo || quartos || vagas) && (
-          <Button variant="ghost" size="sm" onClick={() => { setCidade(""); setBairro(""); setTipo(""); setQuartos(""); setVagas(""); setPage(1); }}>
+        <Input
+          placeholder="Preço mín. (R$)"
+          value={precoMin}
+          onChange={e => { setPrecoMin(e.target.value); setPage(1); }}
+          className="w-36"
+          type="number"
+          min={0}
+        />
+        <Input
+          placeholder="Preço máx. (R$)"
+          value={precoMax}
+          onChange={e => { setPrecoMax(e.target.value); setPage(1); }}
+          className="w-36"
+          type="number"
+          min={0}
+        />
+        {(cidade || bairro || tipo || quartos || vagas || precoMin || precoMax) && (
+          <Button variant="ghost" size="sm" onClick={() => { setCidade(""); setBairro(""); setTipo(""); setQuartos(""); setVagas(""); setPrecoMin(""); setPrecoMax(""); setPage(1); }}>
             Limpar filtros
           </Button>
         )}
