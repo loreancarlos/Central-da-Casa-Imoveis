@@ -81,7 +81,7 @@ export default function Conectores() {
               </CardContent>
             </Card>
           ))
-        ) : !connectors?.length ? (
+        ) : !Array.isArray(connectors) || connectors.length === 0 ? (
           <p className="text-muted-foreground col-span-full py-10 text-center">
             Nenhum conector registrado.
           </p>
