@@ -62,7 +62,7 @@ export default function Historico() {
                   <TableCell colSpan={7}><Skeleton className="h-6 w-full" /></TableCell>
                 </TableRow>
               ))
-            ) : !historico?.length ? (
+            ) : !Array.isArray(historico) || historico.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center py-10 text-muted-foreground">
                   Nenhuma importação executada ainda.

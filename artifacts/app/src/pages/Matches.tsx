@@ -224,7 +224,7 @@ export default function Matches() {
           ) : (
             <Skeleton className="h-64 w-full" />
           )
-        ) : !matches?.length ? (
+        ) : !Array.isArray(matches) || matches.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground border rounded-lg">
             Nenhum match encontrado para este cliente.
           </div>
