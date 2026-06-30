@@ -148,7 +148,7 @@ export default function Fontes() {
                   <TableCell colSpan={6}><Skeleton className="h-6 w-full" /></TableCell>
                 </TableRow>
               ))
-            ) : !fontes?.length ? (
+            ) : !Array.isArray(fontes) || fontes.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
                   Nenhuma fonte cadastrada.
