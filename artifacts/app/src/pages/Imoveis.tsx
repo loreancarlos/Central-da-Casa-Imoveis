@@ -225,6 +225,7 @@ function ImovelCard({ imovel, onClick }: { imovel: Imovel; onClick: () => void }
 }
 
 const QUARTOS_OPTIONS = ["1", "2", "3", "4", "5+"];
+const BANHEIROS_OPTIONS = ["1", "2", "3", "4+"];
 const VAGAS_OPTIONS = ["0", "1", "2", "3", "4+"];
 
 export default function Imoveis() {
@@ -234,6 +235,7 @@ export default function Imoveis() {
   const [bairro, setBairro] = useState("");
   const [tipo, setTipo] = useState("");
   const [quartos, setQuartos] = useState("");
+  const [banheiros, setBanheiros] = useState("");
   const [vagas, setVagas] = useState("");
   const [precoMin, setPrecoMin] = useState("");
   const [precoMax, setPrecoMax] = useState("");
@@ -257,6 +259,7 @@ export default function Imoveis() {
     tipo: tipo || undefined,
     bairro: bairro || undefined,
     quartos: parseMin(quartos),
+    banheiros: parseMin(banheiros),
     vagas: parseMin(vagas),
     precoMin: parsePrice(precoMin),
     precoMax: parsePrice(precoMax),
@@ -326,6 +329,17 @@ export default function Imoveis() {
             ))}
           </SelectContent>
         </Select>
+        <Select value={banheiros} onValueChange={v => { setBanheiros(v === "todos" ? "" : v); setPage(1); }}>
+          <SelectTrigger className="w-44">
+            <SelectValue placeholder="Nº Banheiros" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="todos">Qualquer nº banheiros</SelectItem>
+            {BANHEIROS_OPTIONS.map(b => (
+              <SelectItem key={b} value={b}>{b} banheiro{b !== "1" ? "s" : ""} ou mais</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Select value={vagas} onValueChange={v => { setVagas(v === "todos" ? "" : v); setPage(1); }}>
           <SelectTrigger className="w-44">
             <SelectValue placeholder="Nº Garagem" />
@@ -353,8 +367,8 @@ export default function Imoveis() {
           type="number"
           min={0}
         />
-        {(cidade || bairro || tipo || quartos || vagas || precoMin || precoMax) && (
-          <Button variant="ghost" size="sm" onClick={() => { setCidade(""); setBairro(""); setTipo(""); setQuartos(""); setVagas(""); setPrecoMin(""); setPrecoMax(""); setPage(1); }}>
+        {(cidade || bairro || tipo || quartos || banheiros || vagas || precoMin || precoMax) && (
+          <Button variant="ghost" size="sm" onClick={() => { setCidade(""); setBairro(""); setTipo(""); setQuartos(""); setBanheiros(""); setVagas(""); setPrecoMin(""); setPrecoMax(""); setPage(1); }}>
             Limpar filtros
           </Button>
         )}

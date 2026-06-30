@@ -84,6 +84,7 @@ function MatchCard({ match, onClick, onStatusChange }: {
             <MapPin className="h-3 w-3 shrink-0" />
             <span className="truncate">{match.imovel.bairro}, {match.imovel.cidade}</span>
           </div>
+          <p className="text-xs text-muted-foreground/70 mt-0.5">{match.imovel.fonte}</p>
         </div>
         <div className="flex items-center gap-4 text-sm text-muted-foreground border-t pt-3">
           <div className="flex items-center gap-1">

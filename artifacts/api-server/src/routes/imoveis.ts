@@ -16,7 +16,7 @@ router.get("/imoveis", async (req, res): Promise<void> => {
     return;
   }
 
-  const { cidade, bairro, tipo, precoMin, precoMax, quartos, vagas, page, limit } = query.data;
+  const { cidade, bairro, tipo, precoMin, precoMax, quartos, banheiros, vagas, page, limit } = query.data;
   const offset = (page - 1) * limit;
 
   const conditions = [];
@@ -26,6 +26,7 @@ router.get("/imoveis", async (req, res): Promise<void> => {
   if (precoMin != null) conditions.push(gte(imoveisTable.preco, String(precoMin)));
   if (precoMax != null) conditions.push(lte(imoveisTable.preco, String(precoMax)));
   if (quartos != null) conditions.push(gte(imoveisTable.quartos, quartos));
+  if (banheiros != null) conditions.push(gte(imoveisTable.banheiros, banheiros));
   if (vagas != null) conditions.push(gte(imoveisTable.vagas, vagas));
 
   const whereClause = conditions.length > 0 ? and(...conditions) : undefined;

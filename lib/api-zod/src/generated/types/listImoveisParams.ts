@@ -34,6 +34,10 @@ quartos?: number | null;
 /**
  * @nullable
  */
+banheiros?: number | null;
+/**
+ * @nullable
+ */
 vagas?: number | null;
 page?: number;
 limit?: number;

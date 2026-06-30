@@ -187,6 +187,10 @@ paths:
           in: query
           schema:
             type: ["integer", "null"]
+        - name: banheiros
+          in: query
+          schema:
+            type: ["integer", "null"]
         - name: vagas
           in: query
           schema:

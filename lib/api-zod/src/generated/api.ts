@@ -172,6 +172,7 @@ export const ListImoveisQueryParams = zod.object({
   "precoMin": zod.coerce.number().nullish(),
   "precoMax": zod.coerce.number().nullish(),
   "quartos": zod.coerce.number().nullish(),
+  "banheiros": zod.coerce.number().nullish(),
   "vagas": zod.coerce.number().nullish(),
   "page": zod.coerce.number().default(listImoveisQueryPageDefault),
   "limit": zod.coerce.number().default(listImoveisQueryLimitDefault)
