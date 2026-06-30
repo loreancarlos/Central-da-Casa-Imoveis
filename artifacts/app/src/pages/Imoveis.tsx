@@ -255,7 +255,7 @@ export default function Imoveis() {
 
       <div className="flex justify-end gap-2">
         <Button variant="outline" disabled={page === 1} onClick={() => setPage(p => p - 1)}>Anterior</Button>
-        <Button variant="outline" disabled={!data || data.data.length < limit} onClick={() => setPage(p => p + 1)}>Próxima</Button>
+        <Button variant="outline" disabled={!data || (data.data?.length ?? 0) < limit} onClick={() => setPage(p => p + 1)}>Próxima</Button>
       </div>
     </div>
   );

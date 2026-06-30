@@ -155,7 +155,7 @@ export default function Clientes() {
               <TableRow>
                 <TableCell colSpan={6} className="text-center py-8"><Skeleton className="h-8 w-full" /></TableCell>
               </TableRow>
-            ) : data?.data.length === 0 ? (
+            ) : (data?.data?.length ?? 0) === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Nenhum cliente encontrado.</TableCell>
               </TableRow>
