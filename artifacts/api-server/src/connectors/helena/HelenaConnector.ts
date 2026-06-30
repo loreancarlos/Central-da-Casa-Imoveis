@@ -227,17 +227,43 @@ function extractFloat(html: string, patterns: RegExp[]): number {
 }
 
 function extractDescricao(html: string): string | null {
-  const patterns = [
-    /class="[^"]*(?:descri|observ|texto|detalhe)[^"]*"[^>]*>([\s\S]{30,1000}?)<\//i,
-    /<p[^>]*>([\s\S]{50,800}?)<\/p>/i,
-  ];
-  for (const pat of patterns) {
-    const m = html.match(pat);
-    if (m) {
-      const text = decodeHtml(m[1].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim());
-      if (text.length > 30) return text.slice(0, 800);
+  // Primary: <p> containing <span> with <br> line breaks (Helena's real description format)
+  const spanBrPattern = /<p[^>]*>\s*<span[^>]*>([\s\S]*?)<\/span>\s*<\/p>/gi;
+  let best: string | null = null;
+
+  let m: RegExpExecArray | null;
+  while ((m = spanBrPattern.exec(html)) !== null) {
+    const inner = m[1];
+    if (!/<br/i.test(inner)) continue; // must have at least one <br>
+    const text = decodeHtml(
+      inner
+        .replace(/<br\s*\/?>/gi, "\n")
+        .replace(/<[^>]+>/g, "")
+        .replace(/\r/g, "")
+        .split("\n")
+        .map((l) => l.trim())
+        .filter(Boolean)
+        .join("\n")
+        .trim()
+    );
+    if (text.length > 30 && (!best || text.length > best.length)) {
+      best = text.slice(0, 1200);
     }
   }
+  if (best) return best;
+
+  // Fallback: class-based element with descriptive name
+  const classPatterns = [
+    /class="[^"]*(?:descri|observ|texto|detalhe)[^"]*"[^>]*>([\s\S]{30,1000}?)<\//i,
+  ];
+  for (const pat of classPatterns) {
+    const fm = html.match(pat);
+    if (fm) {
+      const text = decodeHtml(fm[1].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim());
+      if (text.length > 30) return text.slice(0, 1200);
+    }
+  }
+
   return null;
 }
 
