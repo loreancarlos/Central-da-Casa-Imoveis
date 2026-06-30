@@ -1,0 +1,160 @@
+Analise toda a implementação atual do HelenaConnector antes de realizar alterações.
+
+Objetivo desta tarefa:
+
+Evoluir o HelenaConnector para capturar informações detalhadas dos imóveis já importados.
+
+IMPORTANTE
+
+* Continuar utilizando HTML parsing.
+* Não utilizar Playwright.
+* Não utilizar browser automation.
+* Não alterar a arquitetura atual dos conectores.
+* Reaproveitar ao máximo o código existente.
+
+---
+
+OBJETIVO
+
+Atualmente a importação captura apenas:
+
+* identificadorOrigem
+* fonte
+* tipo
+* cidade
+* bairro
+* preco
+* urlOriginal
+
+Agora devemos enriquecer os imóveis utilizando a página de detalhe de cada anúncio.
+
+---
+
+ETAPA 1 — Criar etapa de enriquecimento
+
+Após capturar a listagem:
+
+Para cada imóvel encontrado:
+
+Acessar sua urlOriginal.
+
+Extrair os dados complementares.
+
+---
+
+ETAPA 2 — Capturar campos adicionais
+
+Extrair quando disponíveis:
+
+quartos
+
+banheiros
+
+vagas
+
+area
+
+descricao
+
+Persistir corretamente no banco.
+
+Caso algum campo não exista:
+
+utilizar null.
+
+---
+
+ETAPA 3 — Capturar preço real
+
+Existem imóveis que aparecem como:
+
+"Consulte"
+
+na listagem.
+
+Verificar se a página de detalhe contém o valor real.
+
+Se existir:
+
+atualizar o preço.
+
+---
+
+ETAPA 4 — Capturar fotos
+
+Criar suporte para fotos.
+
+Extrair todas as URLs das imagens do imóvel.
+
+Persistir em estrutura compatível com múltiplas fotos.
+
+Não baixar arquivos.
+
+Salvar apenas as URLs.
+
+---
+
+ETAPA 5 — Performance
+
+Evitar sobrecarga desnecessária.
+
+Implementar estratégia simples:
+
+Importar listagem
+↓
+Buscar detalhes
+↓
+Atualizar imóvel
+
+Adicionar logs:
+
+Detalhes processados
+Tempo médio por imóvel
+Tempo total da importação
+
+---
+
+ETAPA 6 — Interface
+
+Na tela de imóveis:
+
+Exibir:
+
+Quartos
+Banheiros
+Vagas
+Área
+
+Criar modal de detalhes.
+
+Exibir:
+
+Descrição
+Galeria de fotos
+Link original
+
+---
+
+ETAPA 7 — Compatibilidade
+
+Garantir que:
+
+Novos imóveis sejam criados normalmente.
+
+Imóveis já existentes sejam enriquecidos sem duplicação.
+
+---
+
+ETAPA 8 — Relatório
+
+Ao final apresentar:
+
+Quantidade de imóveis enriquecidos.
+
+Campos encontrados.
+
+Quantidade de fotos capturadas.
+
+Tempo total da execução.
+
+Limitações encontradas.

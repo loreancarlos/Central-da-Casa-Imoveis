@@ -1,4 +1,5 @@
 import { pgTable, serial, text, numeric, integer, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+// text().array() creates a text[] column in PostgreSQL
 import { createInsertSchema } from "drizzle-zod";
 import { sql } from "drizzle-orm";
 import { z } from "zod/v4";
@@ -18,6 +19,7 @@ export const imoveisTable = pgTable("imoveis", {
   vagas: integer("vagas").notNull().default(0),
   descricao: text("descricao"),
   urlOriginal: text("url_original"),
+  fotos: text("fotos").array().default([]).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 }, (table) => [

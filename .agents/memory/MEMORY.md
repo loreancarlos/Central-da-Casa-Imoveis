@@ -1,0 +1,1 @@
+- [Helena Connector enrichment](helena-connector-enrichment.md) — fotos as text[], detail page enrichment with 400ms delay, ISO-8859-1 encoding, regex fallbacks

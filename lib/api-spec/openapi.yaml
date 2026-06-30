@@ -572,6 +572,10 @@ components:
           type: ["string", "null"]
         urlOriginal:
           type: ["string", "null"]
+        fotos:
+          type: array
+          items:
+            type: string
         createdAt:
           type: string
         updatedAt:

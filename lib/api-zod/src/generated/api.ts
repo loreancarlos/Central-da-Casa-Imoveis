@@ -193,6 +193,7 @@ export const ListImoveisResponse = zod.object({
   "vagas": zod.number(),
   "descricao": zod.string().nullish(),
   "urlOriginal": zod.string().nullish(),
+  "fotos": zod.array(zod.string()).optional(),
   "createdAt": zod.string(),
   "updatedAt": zod.string()
 })),
@@ -224,6 +225,7 @@ export const GetImovelResponse = zod.object({
   "vagas": zod.number(),
   "descricao": zod.string().nullish(),
   "urlOriginal": zod.string().nullish(),
+  "fotos": zod.array(zod.string()).optional(),
   "createdAt": zod.string(),
   "updatedAt": zod.string()
 })
@@ -269,6 +271,7 @@ export const GetMatchesForClienteResponseItem = zod.object({
   "vagas": zod.number(),
   "descricao": zod.string().nullish(),
   "urlOriginal": zod.string().nullish(),
+  "fotos": zod.array(zod.string()).optional(),
   "createdAt": zod.string(),
   "updatedAt": zod.string()
 })

@@ -25,6 +25,7 @@ export interface Imovel {
   descricao?: string | null;
   /** @nullable */
   urlOriginal?: string | null;
+  fotos?: string[];
   createdAt: string;
   updatedAt: string;
 }

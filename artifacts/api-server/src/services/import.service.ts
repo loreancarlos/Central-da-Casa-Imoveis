@@ -50,6 +50,7 @@ export class PropertyImportService {
           vagas: prop.vagas ?? 0,
           descricao: prop.descricao ?? null,
           urlOriginal: prop.urlOriginal ?? null,
+          fotos: prop.fotos ?? [],
         };
 
         if (existing.length > 0) {

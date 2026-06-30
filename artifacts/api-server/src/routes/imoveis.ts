@@ -77,6 +77,7 @@ export function imovelToResponse(i: typeof imoveisTable.$inferSelect) {
     ...i,
     preco: Number(i.preco),
     area: Number(i.area),
+    fotos: i.fotos ?? [],
     createdAt: i.createdAt.toISOString(),
     updatedAt: i.updatedAt.toISOString(),
   };
