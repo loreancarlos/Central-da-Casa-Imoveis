@@ -6,9 +6,11 @@ import { logger } from "./lib/logger";
 import { connectorRegistry } from "./connectors/registry";
 import { MockConnector } from "./connectors/mock.connector";
 import { HelenaConnector } from "./connectors/helena/HelenaConnector";
+import { CasaLinharesConnector } from "./connectors/casalinhares/CasaLinharesConnector";
 
 connectorRegistry.register(new MockConnector());
 connectorRegistry.register(new HelenaConnector());
+connectorRegistry.register(new CasaLinharesConnector());
 
 const app: Express = express();
 
