@@ -227,30 +227,36 @@ function extractFloat(html: string, patterns: RegExp[]): number {
 }
 
 function extractDescricao(html: string): string {
-  // Extract content from every <p>...</p>, preserving <br> as newlines.
-  // Pick the longest result — that's almost always the description.
-  const pPattern = /<p[^>]*>([\s\S]*?)<\/p>/gi;
-  let best = "";
+  // 1. Locate the <div class="descricao"> block
+  const divMatch = html.match(/<div[^>]+class="[^"]*descricao[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
+  if (!divMatch) return "Sem descrição";
 
-  let m: RegExpExecArray | null;
-  while ((m = pPattern.exec(html)) !== null) {
-    const inner = m[1];
-    const text = decodeHtml(
-      inner
-        .replace(/<br\s*\/?>/gi, "\n")   // <br> → newline
-        .replace(/<[^>]+>/g, "")          // strip remaining tags
-        .replace(/\r/g, "")
-        .split("\n")
-        .map((l) => l.trim())
-        .filter(Boolean)
-        .join("\n")
-        .trim()
-    );
-    if (text.length > best.length) best = text;
-  }
+  const divContent = divMatch[1];
 
-  if (best.length > 20) return best.slice(0, 2000);
-  return "Sem descrição";
+  // 2. Find the <p> inside that div
+  const pMatch = divContent.match(/<p[^>]*>([\s\S]*?)<\/p>/i);
+  if (!pMatch) return "Sem descrição";
+
+  const pContent = pMatch[1];
+
+  // 3. Strip <style>...</style> blocks entirely
+  const cleaned = pContent.replace(/<style[\s\S]*?<\/style>/gi, "");
+
+  // 4. Replace <br> with newline, then strip all remaining tags
+  const text = decodeHtml(
+    cleaned
+      .replace(/<br\s*\/?>/gi, "\n")
+      .replace(/<[^>]+>/g, "")
+      .replace(/\r/g, "")
+      .replace(/&nbsp;/g, " ")
+      .split("\n")
+      .map((l) => l.trim())
+      .filter(Boolean)
+      .join("\n")
+      .trim()
+  );
+
+  return text.length > 5 ? text.slice(0, 2000) : "Sem descrição";
 }
 
 function extractFotos(html: string, pageUrl: string): string[] {
