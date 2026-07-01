@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   useListConnectors,
   useRunConnectorImport,
@@ -24,6 +24,46 @@ import {
 import { Play, Plug } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+interface ImportProgress {
+  current: number;
+  total: number;
+  running: boolean;
+}
+
+function useImportProgress(nome: string | null, enabled: boolean) {
+  const [progress, setProgress] = useState<ImportProgress | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (!enabled || !nome) {
+      setProgress(null);
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      return;
+    }
+
+    const poll = async () => {
+      try {
+        const res = await fetch(`/api/connectors/${encodeURIComponent(nome)}/progresso`);
+        if (res.ok) {
+          const data: ImportProgress = await res.json();
+          setProgress(data);
+        }
+      } catch {
+        // ignore poll errors
+      }
+    };
+
+    poll();
+    intervalRef.current = setInterval(poll, 600);
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [nome, enabled]);
+
+  return progress;
+}
+
 export default function Conectores() {
   const queryClient = useQueryClient();
   const { data: connectors, isLoading } = useListConnectors();
@@ -36,6 +76,8 @@ export default function Conectores() {
     ignorados: number;
   } | null>(null);
   const [runningNome, setRunningNome] = useState<string | null>(null);
+
+  const progress = useImportProgress(runningNome, !!runningNome);
 
   const handleImport = (nome: string) => {
     setRunningNome(nome);
@@ -57,6 +99,14 @@ export default function Conectores() {
         },
       }
     );
+  };
+
+  const getButtonLabel = (nome: string) => {
+    if (runningNome !== nome) return "Executar Importação";
+    if (progress && progress.total > 0) {
+      return `Importando... (${progress.current}/${progress.total})`;
+    }
+    return "Importando...";
   };
 
   return (
@@ -98,22 +148,29 @@ export default function Conectores() {
                   <Badge className="bg-green-500 text-white hover:bg-green-600">Ativo</Badge>
                 </CardDescription>
               </CardHeader>
-              <CardContent className="mt-auto">
+              <CardContent className="mt-auto space-y-2">
                 <Button
                   className="w-full"
                   onClick={() => handleImport(connector.nome)}
                   disabled={runningNome === connector.nome}
                 >
                   <Play className="h-4 w-4 mr-2" />
-                  {runningNome === connector.nome ? "Importando..." : "Executar Importação"}
+                  {getButtonLabel(connector.nome)}
                 </Button>
+                {runningNome === connector.nome && progress && progress.total > 0 && (
+                  <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
+                    <div
+                      className="bg-primary h-1.5 rounded-full transition-all duration-500"
+                      style={{ width: `${Math.round((progress.current / progress.total) * 100)}%` }}
+                    />
+                  </div>
+                )}
               </CardContent>
             </Card>
           ))
         )}
       </div>
 
-      {/* Result Modal */}
       <Dialog open={!!resultModal} onOpenChange={(open) => !open && setResultModal(null)}>
         <DialogContent className="max-w-sm">
           <DialogHeader>

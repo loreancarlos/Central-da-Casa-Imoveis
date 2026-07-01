@@ -1,5 +1,6 @@
 import type { PropertyConnector, PropertyImportData } from "../types";
 import { logger } from "../../lib/logger";
+import { setProgress, clearProgress } from "../../lib/progressStore";
 
 const BASE_URL = "https://www.helenaimoveis.com.br";
 const LISTING_BASE = `${BASE_URL}/mobile/imovel/venda/todos/timoteo`;
@@ -47,6 +48,7 @@ export class HelenaConnector implements PropertyConnector {
     }
 
     logger.info({ total: cards.length }, "Listagem concluída — iniciando enriquecimento");
+    setProgress(FONTE, { current: 0, total: cards.length, running: true });
 
     const results: PropertyImportData[] = [];
     let fotosTotal = 0;
@@ -84,6 +86,7 @@ export class HelenaConnector implements PropertyConnector {
       });
 
       const elapsed = Date.now() - tInicio;
+      setProgress(FONTE, { current: i + 1, total: cards.length, running: true });
       logger.info(
         { progresso: `${i + 1}/${cards.length}`, fotos: detail.fotos.length, tempoMs: elapsed },
         "Imóvel enriquecido"
@@ -97,6 +100,7 @@ export class HelenaConnector implements PropertyConnector {
     const totalMs = Date.now() - start;
     const avgMs = cards.length > 0 ? Math.round(totalMs / cards.length) : 0;
 
+    clearProgress(FONTE);
     logger.info(
       {
         totalEncontrados: results.length,

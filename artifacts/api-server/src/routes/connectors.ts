@@ -3,6 +3,7 @@ import { desc } from "drizzle-orm";
 import { db, historicoImportacoesTable } from "@workspace/db";
 import { connectorRegistry } from "../connectors/registry";
 import { propertyImportService } from "../services/import.service";
+import { getProgress } from "../lib/progressStore";
 
 const router: IRouter = Router();
 
@@ -28,6 +29,11 @@ router.post("/connectors/:nome/importar", async (req, res): Promise<void> => {
     atualizados: result.atualizados,
     ignorados: result.ignorados,
   });
+});
+
+router.get("/connectors/:nome/progresso", (req, res): void => {
+  const { nome } = req.params;
+  res.json(getProgress(nome));
 });
 
 router.get("/importacoes", async (_req, res): Promise<void> => {
