@@ -20,7 +20,7 @@ interface DetailData {
   banheiros: number;
   vagas: number;
   area: number;
-  descricao: string | null;
+  descricao: string;
   fotos: string[];
   preco: number | null;
 }
@@ -55,7 +55,7 @@ export class HelenaConnector implements PropertyConnector {
       const card = cards[i];
       const tInicio = Date.now();
 
-      let detail: DetailData = { quartos: 0, banheiros: 0, vagas: 0, area: 0, descricao: null, fotos: [], preco: null };
+      let detail: DetailData = { quartos: 0, banheiros: 0, vagas: 0, area: 0, descricao: "Sem descrição", fotos: [], preco: null };
 
       try {
         const detailHtml = await this.fetchHtml(card.urlOriginal);
@@ -226,19 +226,19 @@ function extractFloat(html: string, patterns: RegExp[]): number {
   return 0;
 }
 
-function extractDescricao(html: string): string | null {
-  // Primary: <p> containing <span> with <br> line breaks (Helena's real description format)
-  const spanBrPattern = /<p[^>]*>\s*<span[^>]*>([\s\S]*?)<\/span>\s*<\/p>/gi;
-  let best: string | null = null;
+function extractDescricao(html: string): string {
+  // Extract content from every <p>...</p>, preserving <br> as newlines.
+  // Pick the longest result — that's almost always the description.
+  const pPattern = /<p[^>]*>([\s\S]*?)<\/p>/gi;
+  let best = "";
 
   let m: RegExpExecArray | null;
-  while ((m = spanBrPattern.exec(html)) !== null) {
+  while ((m = pPattern.exec(html)) !== null) {
     const inner = m[1];
-    if (!/<br/i.test(inner)) continue; // must have at least one <br>
     const text = decodeHtml(
       inner
-        .replace(/<br\s*\/?>/gi, "\n")
-        .replace(/<[^>]+>/g, "")
+        .replace(/<br\s*\/?>/gi, "\n")   // <br> → newline
+        .replace(/<[^>]+>/g, "")          // strip remaining tags
         .replace(/\r/g, "")
         .split("\n")
         .map((l) => l.trim())
@@ -246,25 +246,11 @@ function extractDescricao(html: string): string | null {
         .join("\n")
         .trim()
     );
-    if (text.length > 30 && (!best || text.length > best.length)) {
-      best = text.slice(0, 1200);
-    }
-  }
-  if (best) return best;
-
-  // Fallback: class-based element with descriptive name
-  const classPatterns = [
-    /class="[^"]*(?:descri|observ|texto|detalhe)[^"]*"[^>]*>([\s\S]{30,1000}?)<\//i,
-  ];
-  for (const pat of classPatterns) {
-    const fm = html.match(pat);
-    if (fm) {
-      const text = decodeHtml(fm[1].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim());
-      if (text.length > 30) return text.slice(0, 1200);
-    }
+    if (text.length > best.length) best = text;
   }
 
-  return null;
+  if (best.length > 20) return best.slice(0, 2000);
+  return "Sem descrição";
 }
 
 function extractFotos(html: string, pageUrl: string): string[] {
