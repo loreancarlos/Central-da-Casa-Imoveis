@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { sql, and, gte, lte } from "drizzle-orm";
+import { sql, and, gte, lte, eq } from "drizzle-orm";
 import { db, imoveisTable } from "@workspace/db";
 import {
   ListImoveisQueryParams,
@@ -71,6 +71,27 @@ router.get("/imoveis/:id", async (req, res): Promise<void> => {
   }
 
   res.json(GetImovelResponse.parse(imovelToResponse(imovel)));
+});
+
+router.patch("/imoveis/:id/preco", async (req, res): Promise<void> => {
+  const id = parseInt(req.params.id, 10);
+  if (isNaN(id)) { res.status(400).json({ error: "ID inválido" }); return; }
+
+  const { preco } = req.body;
+  if (typeof preco !== "number" || preco < 0) {
+    res.status(400).json({ error: "Preço inválido" });
+    return;
+  }
+
+  const [updated] = await db
+    .update(imoveisTable)
+    .set({ preco: String(preco), updatedAt: new Date() })
+    .where(eq(imoveisTable.id, id))
+    .returning();
+
+  if (!updated) { res.status(404).json({ error: "Imóvel não encontrado" }); return; }
+
+  res.json(imovelToResponse(updated));
 });
 
 export function imovelToResponse(i: typeof imoveisTable.$inferSelect) {

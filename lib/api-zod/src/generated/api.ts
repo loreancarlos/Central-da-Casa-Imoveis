@@ -233,6 +233,42 @@ export const GetImovelResponse = zod.object({
 
 
 /**
+ * @summary Update property price
+ */
+export const UpdateImovelPrecoParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const updateImovelPrecoBodyPrecoMin = 0;
+
+
+
+export const UpdateImovelPrecoBody = zod.object({
+  "preco": zod.number().min(updateImovelPrecoBodyPrecoMin)
+})
+
+export const UpdateImovelPrecoResponse = zod.object({
+  "id": zod.number(),
+  "fonte": zod.string(),
+  "identificadorOrigem": zod.string().nullish(),
+  "codigoExterno": zod.string().nullish(),
+  "tipo": zod.string(),
+  "cidade": zod.string(),
+  "bairro": zod.string(),
+  "preco": zod.number(),
+  "area": zod.number(),
+  "quartos": zod.number(),
+  "banheiros": zod.number(),
+  "vagas": zod.number(),
+  "descricao": zod.string().nullish(),
+  "urlOriginal": zod.string().nullish(),
+  "fotos": zod.array(zod.string()).optional(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+
+
+/**
  * @summary List all matches
  */
 export const ListMatchesResponseItem = zod.object({

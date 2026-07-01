@@ -17,6 +17,7 @@ export * from './healthStatus';
 export * from './historicoImportacao';
 export * from './imovel';
 export * from './imovelList';
+export * from './imovelPrecoUpdate';
 export * from './imovelTipoCount';
 export * from './importStats';
 export * from './listClientesParams';

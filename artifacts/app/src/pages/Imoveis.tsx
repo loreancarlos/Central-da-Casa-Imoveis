@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useListImoveis } from "@workspace/api-client-react";
+import { useListImoveis, useUpdateImovelPreco, getListImoveisQueryKey } from "@workspace/api-client-react";
 import type { Imovel } from "@workspace/api-client-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { formatCurrency } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,11 +13,89 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   LayoutGrid, List, BedDouble, Car, MapPin, Maximize2, ExternalLink,
-  Bath, ChevronLeft, ChevronRight, ImageOff, Info,
+  Bath, ChevronLeft, ChevronRight, ImageOff, Info, Pencil, Check, X,
 } from "lucide-react";
 
 function getFallbackImage(imovel: Imovel): string {
   return `https://picsum.photos/seed/imovel-${imovel.id}/640/360`;
+}
+
+function PriceEditor({ imovel }: { imovel: Imovel }) {
+  const [editing, setEditing] = useState(false);
+  const [value, setValue] = useState("");
+  const queryClient = useQueryClient();
+  const updatePreco = useUpdateImovelPreco();
+
+  const handleSave = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const num = parseFloat(value.replace(/\./g, "").replace(",", "."));
+    if (isNaN(num) || num <= 0) return;
+    updatePreco.mutate(
+      { id: imovel.id, data: { preco: num } },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getListImoveisQueryKey() });
+          setEditing(false);
+          setValue("");
+        },
+      }
+    );
+  };
+
+  const handleCancel = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditing(false);
+    setValue("");
+  };
+
+  if (imovel.preco !== 0) {
+    return <p className="font-bold text-lg leading-tight">{formatCurrency(imovel.preco)}</p>;
+  }
+
+  if (editing) {
+    return (
+      <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+        <span className="text-xs text-muted-foreground shrink-0">R$</span>
+        <Input
+          autoFocus
+          type="number"
+          min={0}
+          placeholder="0,00"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleSave(e as any);
+            if (e.key === "Escape") handleCancel(e as any);
+          }}
+          className="h-7 w-28 text-sm px-2"
+        />
+        <button
+          onClick={handleSave}
+          disabled={updatePreco.isPending}
+          className="text-green-600 hover:text-green-700 disabled:opacity-50"
+          title="Confirmar"
+        >
+          <Check className="h-4 w-4" />
+        </button>
+        <button onClick={handleCancel} className="text-muted-foreground hover:text-foreground" title="Cancelar">
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-1.5">
+      <p className="font-bold text-lg leading-tight text-muted-foreground">A consultar</p>
+      <button
+        onClick={(e) => { e.stopPropagation(); setEditing(true); }}
+        className="text-muted-foreground hover:text-foreground transition-colors"
+        title="Informar preço"
+      >
+        <Pencil className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  );
 }
 
 function getMainPhoto(imovel: Imovel): string {
@@ -191,7 +270,7 @@ function ImovelCard({ imovel, onClick }: { imovel: Imovel; onClick: () => void }
       </div>
       <CardContent className="p-4 space-y-3">
         <div>
-          <p className="font-bold text-lg leading-tight">{formatCurrency(imovel.preco)}</p>
+          <PriceEditor imovel={imovel} />
           <div className="flex items-center gap-1 text-muted-foreground text-sm mt-1">
             <MapPin className="h-3 w-3 shrink-0" />
             <span className="truncate">{imovel.bairro}, {imovel.cidade}</span>
@@ -425,7 +504,7 @@ export default function Imoveis() {
                   <TableCell className="font-mono text-xs">{imovel.codigoExterno || imovel.id}</TableCell>
                   <TableCell className="font-medium">{imovel.tipo}</TableCell>
                   <TableCell>{imovel.bairro}, {imovel.cidade}</TableCell>
-                  <TableCell className="font-bold">{formatCurrency(imovel.preco)}</TableCell>
+                  <TableCell className="font-bold"><PriceEditor imovel={imovel} /></TableCell>
                   <TableCell>
                     <div className="flex gap-3 text-sm text-muted-foreground">
                       {imovel.area > 0 && <span>{imovel.area}m²</span>}

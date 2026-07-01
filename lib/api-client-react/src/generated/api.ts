@@ -31,6 +31,7 @@ import type {
   HistoricoImportacao,
   Imovel,
   ImovelList,
+  ImovelPrecoUpdate,
   ImportStats,
   ListClientesParams,
   ListImoveisParams,
@@ -741,6 +742,78 @@ export function useGetImovel<TData = Awaited<ReturnType<typeof getImovel>>, TErr
 
 
 
+
+export const getUpdateImovelPrecoUrl = (id: number,) => {
+
+
+
+
+  return `/api/imoveis/${id}/preco`
+}
+
+/**
+ * @summary Update property price
+ */
+export const updateImovelPreco = async (id: number,
+    imovelPrecoUpdate: ImovelPrecoUpdate, options?: RequestInit): Promise<Imovel> => {
+
+  return customFetch<Imovel>(getUpdateImovelPrecoUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      imovelPrecoUpdate,)
+  }
+);}
+
+
+
+
+export const getUpdateImovelPrecoMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateImovelPreco>>, TError,{id: number;data: BodyType<ImovelPrecoUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateImovelPreco>>, TError,{id: number;data: BodyType<ImovelPrecoUpdate>}, TContext> => {
+
+const mutationKey = ['updateImovelPreco'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateImovelPreco>>, {id: number;data: BodyType<ImovelPrecoUpdate>}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateImovelPreco(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateImovelPrecoMutationResult = NonNullable<Awaited<ReturnType<typeof updateImovelPreco>>>
+    export type UpdateImovelPrecoMutationBody = BodyType<ImovelPrecoUpdate>
+    export type UpdateImovelPrecoMutationError = ErrorType<void>
+
+    /**
+ * @summary Update property price
+ */
+export const useUpdateImovelPreco = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateImovelPreco>>, TError,{id: number;data: BodyType<ImovelPrecoUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updateImovelPreco>>,
+        TError,
+        {id: number;data: BodyType<ImovelPrecoUpdate>},
+        TContext
+      > => {
+      return useMutation(getUpdateImovelPrecoMutationOptions(options));
+    }
 
 export const getListMatchesUrl = () => {
 

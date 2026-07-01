@@ -130,6 +130,11 @@ export interface MatchResult {
   imovel: Imovel;
 }
 
+export interface ImovelPrecoUpdate {
+  /** @minimum 0 */
+  preco: number;
+}
+
 export type MatchStatusUpdateStatus = typeof MatchStatusUpdateStatus[keyof typeof MatchStatusUpdateStatus];
 
 
