@@ -21,6 +21,8 @@ export * from './imovelPrecoUpdate';
 export * from './imovelTipoCount';
 export * from './importStats';
 export * from './listClientesParams';
+export * from './listImoveisOrderBy';
+export * from './listImoveisOrderDir';
 export * from './listImoveisParams';
 export * from './match';
 export * from './matchResult';

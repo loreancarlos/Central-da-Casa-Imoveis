@@ -318,6 +318,7 @@ export default function Imoveis() {
   const [vagas, setVagas] = useState("");
   const [precoMin, setPrecoMin] = useState("");
   const [precoMax, setPrecoMax] = useState("");
+  const [ordenar, setOrdenar] = useState("");
   const [selected, setSelected] = useState<Imovel | null>(null);
 
   const parseMin = (val: string) => {
@@ -331,6 +332,9 @@ export default function Imoveis() {
     return isNaN(n) || n <= 0 ? undefined : n;
   };
 
+  const orderBy = ordenar === "preco-asc" || ordenar === "preco-desc" ? "preco" : undefined;
+  const orderDir = ordenar === "preco-asc" ? "asc" : ordenar === "preco-desc" ? "desc" : undefined;
+
   const { data, isLoading } = useListImoveis({
     page,
     limit: view === "gallery" ? 12 : 10,
@@ -342,6 +346,8 @@ export default function Imoveis() {
     vagas: parseMin(vagas),
     precoMin: parsePrice(precoMin),
     precoMax: parsePrice(precoMax),
+    orderBy,
+    orderDir,
   });
 
   const hasResults = (data?.data?.length ?? 0) > 0;
@@ -446,8 +452,18 @@ export default function Imoveis() {
           type="number"
           min={0}
         />
-        {(cidade || bairro || tipo || quartos || banheiros || vagas || precoMin || precoMax) && (
-          <Button variant="ghost" size="sm" onClick={() => { setCidade(""); setBairro(""); setTipo(""); setQuartos(""); setBanheiros(""); setVagas(""); setPrecoMin(""); setPrecoMax(""); setPage(1); }}>
+        <Select value={ordenar} onValueChange={v => { setOrdenar(v === "padrao" ? "" : v); setPage(1); }}>
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="Ordenar por" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="padrao">Padrão</SelectItem>
+            <SelectItem value="preco-asc">Preço: menor → maior</SelectItem>
+            <SelectItem value="preco-desc">Preço: maior → menor</SelectItem>
+          </SelectContent>
+        </Select>
+        {(cidade || bairro || tipo || quartos || banheiros || vagas || precoMin || precoMax || ordenar) && (
+          <Button variant="ghost" size="sm" onClick={() => { setCidade(""); setBairro(""); setTipo(""); setQuartos(""); setBanheiros(""); setVagas(""); setPrecoMin(""); setPrecoMax(""); setOrdenar(""); setPage(1); }}>
             Limpar filtros
           </Button>
         )}

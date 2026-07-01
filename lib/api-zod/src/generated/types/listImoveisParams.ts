@@ -5,6 +5,8 @@
  * Central da Casa Property Finder API
  * OpenAPI spec version: 0.1.0
  */
+import type { ListImoveisOrderBy } from './listImoveisOrderBy';
+import type { ListImoveisOrderDir } from './listImoveisOrderDir';
 
 export type ListImoveisParams = {
 /**
@@ -39,6 +41,14 @@ banheiros?: number | null;
  * @nullable
  */
 vagas?: number | null;
+/**
+ * @nullable
+ */
+orderBy?: ListImoveisOrderBy;
+/**
+ * @nullable
+ */
+orderDir?: ListImoveisOrderDir;
 page?: number;
 limit?: number;
 };

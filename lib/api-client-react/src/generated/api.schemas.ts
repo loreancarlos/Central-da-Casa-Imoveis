@@ -242,7 +242,31 @@ banheiros?: number | null;
  * @nullable
  */
 vagas?: number | null;
+/**
+ * @nullable
+ */
+orderBy?: ListImoveisOrderBy;
+/**
+ * @nullable
+ */
+orderDir?: ListImoveisOrderDir;
 page?: number;
 limit?: number;
 };
+
+export type ListImoveisOrderBy = typeof ListImoveisOrderBy[keyof typeof ListImoveisOrderBy] | null;
+
+
+export const ListImoveisOrderBy = {
+  preco: 'preco',
+  createdAt: 'createdAt',
+} as const;
+
+export type ListImoveisOrderDir = typeof ListImoveisOrderDir[keyof typeof ListImoveisOrderDir] | null;
+
+
+export const ListImoveisOrderDir = {
+  asc: 'asc',
+  desc: 'desc',
+} as const;
 

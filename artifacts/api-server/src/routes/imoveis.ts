@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { sql, and, gte, lte, eq } from "drizzle-orm";
+import { sql, and, gte, lte, eq, asc, desc } from "drizzle-orm";
 import { db, imoveisTable } from "@workspace/db";
 import {
   ListImoveisQueryParams,
@@ -16,7 +16,7 @@ router.get("/imoveis", async (req, res): Promise<void> => {
     return;
   }
 
-  const { cidade, bairro, tipo, precoMin, precoMax, quartos, banheiros, vagas, page, limit } = query.data;
+  const { cidade, bairro, tipo, precoMin, precoMax, quartos, banheiros, vagas, orderBy, orderDir, page, limit } = query.data;
   const offset = (page - 1) * limit;
 
   const conditions = [];
@@ -31,12 +31,15 @@ router.get("/imoveis", async (req, res): Promise<void> => {
 
   const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
+  const sortCol = orderBy === "preco" ? imoveisTable.preco : imoveisTable.createdAt;
+  const sortOrder = orderDir === "asc" ? asc(sortCol) : desc(sortCol);
+
   const [data, countResult] = await Promise.all([
     db
       .select()
       .from(imoveisTable)
       .where(whereClause)
-      .orderBy(imoveisTable.createdAt)
+      .orderBy(sortOrder)
       .limit(limit)
       .offset(offset),
     db

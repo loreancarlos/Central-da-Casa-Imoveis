@@ -195,6 +195,16 @@ paths:
           in: query
           schema:
             type: ["integer", "null"]
+        - name: orderBy
+          in: query
+          schema:
+            type: ["string", "null"]
+            enum: ["preco", "createdAt", null]
+        - name: orderDir
+          in: query
+          schema:
+            type: ["string", "null"]
+            enum: ["asc", "desc", null]
         - name: page
           in: query
           schema:
